@@ -1,9 +1,6 @@
 package com.pingpongchat.server;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
@@ -16,7 +13,7 @@ public class EchoServer {
 
     public EchoServer(int port) {
         this.port = port;
-        this.executorService = Executors.newFixedThreadPool(2);
+        this.executorService = Executors.newCachedThreadPool();
     }
 
     public static void main(String[] args) {
@@ -24,35 +21,36 @@ public class EchoServer {
     }
 
     public void start() {
-        ServerSocket serverSocket;
+
         try {
-            serverSocket = new ServerSocket(port);
-            executorService.execute(() -> {
-                try {
-                    System.out.println("Echo Server started...");
-                    Socket clientSocket = serverSocket.accept();
+            ServerSocket serverSocket = new ServerSocket(port);
+            System.out.println("Awaiting connections...");
+            while(true) {
+                Socket clientSocket = acceptSocket(serverSocket);
+                executorService.submit(() -> {
                     System.out.println("Handling new connection...");
+                    SocketProcessor socketProcessor = new SocketProcessor(clientSocket);
+                    socketProcessor.process();
 
-                    PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-                    BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                });
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+//        Thread serverThread = new Thread(() -> {
+//        });
+//        serverThread.start();
+    }
 
-                    String inputLine;
-                    while ((inputLine = in.readLine()) != null) {
 
-                        String uppercase = inputLine.toUpperCase();
-                        out.println(uppercase);
-                        System.out.println("Echo: " + uppercase);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            });
-
+    private Socket acceptSocket(ServerSocket serverSocket) {
+        try {
+            return serverSocket.accept();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        return null;
     }
 
     public void stop() {
