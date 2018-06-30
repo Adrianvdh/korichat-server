@@ -3,21 +3,28 @@ package com.pingpongchat.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class EchoServer {
+public class Server {
 
     final int port;
     private ExecutorService executorService;
+    private ConcurrentMap<String, ClientHandler> clientConnections;
 
-    public EchoServer(int port) {
+    public Server(int port) {
         this.port = port;
         this.executorService = Executors.newCachedThreadPool();
+        this.clientConnections = new ConcurrentHashMap<>();
     }
 
     public static void main(String[] args) {
-        new EchoServer(31145).start();
+        new Server(31145).start();
     }
 
     public void start() {
@@ -27,10 +34,16 @@ public class EchoServer {
             System.out.println("Awaiting connections...");
             while(true) {
                 Socket clientSocket = acceptSocket(serverSocket);
+
+                String sessionId = generateSessionId();
+
                 executorService.submit(() -> {
                     System.out.println("Handling new connection...");
-                    SocketProcessor socketProcessor = new SocketProcessor(clientSocket);
-                    socketProcessor.process();
+
+                    ClientHandler clientHandler = new GroupChatHandler(clientSocket, sessionId,this);
+                    clientConnections.put(sessionId, clientHandler);
+
+                    clientHandler.handle();
 
                 });
             }
@@ -38,9 +51,18 @@ public class EchoServer {
         catch (IOException e) {
             e.printStackTrace();
         }
-//        Thread serverThread = new Thread(() -> {
-//        });
-//        serverThread.start();
+    }
+
+    public void broadcastMessage(String message) {
+        clientConnections.forEach((sessionId, clientHandler) -> clientHandler.sendMessage(message));
+    }
+
+    protected String generateSessionId() {
+        Random random = new Random();
+        int randomInt = random.nextInt(999);
+
+        NumberFormat numberFormat = new DecimalFormat("#000");
+        return numberFormat.format(randomInt);
     }
 
 
