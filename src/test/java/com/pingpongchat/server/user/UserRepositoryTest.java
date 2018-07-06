@@ -2,6 +2,7 @@ package com.pingpongchat.server.user;
 
 import org.hamcrest.Matchers;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
@@ -9,17 +10,22 @@ import java.util.stream.Collectors;
 
 public class UserRepositoryTest {
 
+    UserRepository userRepository;
+
+    @Before
+    public void setUp() throws Exception {
+        userRepository = UserRepositorySingleton.get();
+        userRepository.deleteAll();
+    }
+
     @Test
     public void getUserRepository() {
-        UserRepository userRepository = UserRepositorySingleton.get();
-
         Assert.assertTrue(userRepository != null);
     }
 
 
     @Test
     public void testAddUser() throws Exception {
-        UserRepository userRepository = UserRepositorySingleton.get();
         String username = "adrian";
 
         userRepository.add(username);
@@ -31,7 +37,6 @@ public class UserRepositoryTest {
 
     @Test(expected = UserAlreadyExistsException.class)
     public void testAddUserThatAlreadyExists() throws Exception {
-        UserRepository userRepository = UserRepositorySingleton.get();
         String username = "adrian";
 
         userRepository.add(username);
@@ -40,7 +45,6 @@ public class UserRepositoryTest {
 
     @Test
     public void testFindAllUsers() throws UserAlreadyExistsException {
-        UserRepository userRepository = UserRepositorySingleton.get();
         userRepository.add("adrian");
         userRepository.add("josie");
 
@@ -52,7 +56,6 @@ public class UserRepositoryTest {
 
     @Test
     public void testDeleteAll() throws UserAlreadyExistsException {
-        UserRepository userRepository = UserRepositorySingleton.get();
         userRepository.add("adrian");
         userRepository.add("josie");
 
