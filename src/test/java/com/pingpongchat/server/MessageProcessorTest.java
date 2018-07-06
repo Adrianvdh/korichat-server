@@ -26,7 +26,7 @@ public class MessageProcessorTest {
     @Test
     public void testRegisterUserThatAlreadyExists() {
         String command = "REG adrian";
-        String expectedResponse = "409 Conflict";
+        String expectedResponse = Responses.CONFLICT;
 
         messageProcessor.process(command);
         String response = messageProcessor.process(command);
