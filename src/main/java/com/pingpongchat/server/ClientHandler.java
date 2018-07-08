@@ -10,6 +10,8 @@ public class ClientHandler {
     private Server server;
 
     private String sessionId;
+    private Socket socket;
+
     private PrintWriter out;
     private BufferedReader in;
 
@@ -19,6 +21,7 @@ public class ClientHandler {
         this.server = server;
         this.sessionId = sessionId;
         this.messageProcessor = new MessageProcessor();
+        this.socket = clientSocket;
 
         trySetupInAndOutStreams(clientSocket);
     }
@@ -38,6 +41,12 @@ public class ClientHandler {
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
 
+                if(Thread.currentThread().isInterrupted()) {
+                    this.out.close();
+                    this.in.close();
+                    socket.close();
+                    break;
+                }
                 String response = messageProcessor.process(inputLine);
                 out.println(response);
             }
