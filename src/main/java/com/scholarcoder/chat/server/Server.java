@@ -15,7 +15,7 @@ public class Server {
     private ExecutorService connectionHandlerExecutorService;
     private List<Future> clientHandlerConnections;
 
-    private volatile boolean started = false;
+    private volatile boolean serverStarted = false;
     private int port;
 
     public Server(int port) {
@@ -74,11 +74,11 @@ public class Server {
     }
 
     private synchronized void notifyServerStarted() {
-        started = true;
+        serverStarted = true;
         notify();
     }
     private synchronized void waitUntilStarted() {
-        while(!started) {
+        while(!serverStarted) {
             try {
                 wait();
             } catch (InterruptedException e) {
