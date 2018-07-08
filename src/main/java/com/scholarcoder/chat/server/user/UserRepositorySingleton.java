@@ -1,4 +1,4 @@
-package com.pingpongchat.server.user;
+package com.scholarcoder.chat.server.user;
 
 public class UserRepositorySingleton {
     private static UserRepositorySingleton holder;

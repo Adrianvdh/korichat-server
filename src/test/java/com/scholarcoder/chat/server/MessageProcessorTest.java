@@ -1,4 +1,4 @@
-package com.pingpongchat.server;
+package com.scholarcoder.chat.server;
 
 import org.junit.Assert;
 import org.junit.Before;

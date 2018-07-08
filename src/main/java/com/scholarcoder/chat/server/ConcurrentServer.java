@@ -1,4 +1,4 @@
-package com.pingpongchat.server;
+package com.scholarcoder.chat.server;
 
 import java.io.IOException;
 import java.io.PrintWriter;

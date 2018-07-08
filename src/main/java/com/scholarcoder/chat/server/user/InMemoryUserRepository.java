@@ -1,4 +1,4 @@
-package com.pingpongchat.server.user;
+package com.scholarcoder.chat.server.user;
 
 import java.util.ArrayList;
 import java.util.List;

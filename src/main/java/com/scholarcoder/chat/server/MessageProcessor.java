@@ -1,9 +1,9 @@
-package com.pingpongchat.server;
+package com.scholarcoder.chat.server;
 
-import com.pingpongchat.server.user.User;
-import com.pingpongchat.server.user.UserAlreadyExistsException;
-import com.pingpongchat.server.user.UserRepository;
-import com.pingpongchat.server.user.UserRepositorySingleton;
+import com.scholarcoder.chat.server.user.User;
+import com.scholarcoder.chat.server.user.UserAlreadyExistsException;
+import com.scholarcoder.chat.server.user.UserRepository;
+import com.scholarcoder.chat.server.user.UserRepositorySingleton;
 
 import java.util.List;
 import java.util.stream.Collectors;
