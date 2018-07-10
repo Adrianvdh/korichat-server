@@ -1,43 +1,33 @@
-package com.scholarcoder.chat.server;
+package com.scholarcoder.chat.server.processor;
 
+import com.scholarcoder.chat.server.processor.commands.CommandHandler;
+import com.scholarcoder.chat.server.processor.commands.CommandHandlersSingleton;
+import com.scholarcoder.chat.server.processor.commands.ListUserCommand;
+import com.scholarcoder.chat.server.processor.commands.RegisterUserCommand;
 import com.scholarcoder.chat.server.user.User;
 import com.scholarcoder.chat.server.user.UserAlreadyExistsException;
 import com.scholarcoder.chat.server.user.UserRepository;
 import com.scholarcoder.chat.server.user.UserRepositorySingleton;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class MessageProcessor {
-    private UserRepository userRepository;
+    private List<CommandHandler> commandHandlers;
 
     public MessageProcessor() {
-        this.userRepository = UserRepositorySingleton.get();
+        this.commandHandlers = CommandHandlersSingleton.getRegisteredCommandHandlers();
     }
 
     public String process(String message) {
         Payload payload = Payload.fromMessage(message);
-        // TODO: Refactor to strategy pattern
-        switch(payload.command) {
-            case "REG":
-                String username = payload.body;
-                try {
-                    userRepository.add(username);
-                    return "201 Created";
-
-                } catch (UserAlreadyExistsException e) {
-                    return "409 Conflict";
-                }
-
-            case "LISTUSER":
-                List<User> users = userRepository.findAll();
-                String userListString = users.stream().map(User::getUsername).collect(Collectors.joining(","));
-                if(userListString.isEmpty()) {
-                    return "204 No Content";
-                }
-                return userListString;
+        for (CommandHandler commandHandler : commandHandlers) {
+            if(commandHandler.applicable(payload.command)) {
+                String response = commandHandler.doPerform(payload.body);
+                return response;
+            }
         }
-
         return "405 Command Not Allowed";
     }
 

@@ -1,5 +1,6 @@
 package com.scholarcoder.chat.server;
 
+import com.scholarcoder.chat.server.processor.MessageProcessor;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

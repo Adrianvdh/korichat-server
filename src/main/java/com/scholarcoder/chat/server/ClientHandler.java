@@ -1,5 +1,8 @@
 package com.scholarcoder.chat.server;
 
+import com.scholarcoder.chat.server.processor.MessageProcessor;
+import com.scholarcoder.chat.server.processor.commands.CommandHandlersSingleton;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -26,6 +29,7 @@ public class ClientHandler {
         trySetupInAndOutStreams(clientSocket);
     }
 
+
     private void trySetupInAndOutStreams(Socket clientSocket) {
         try {
             this.out = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -41,7 +45,7 @@ public class ClientHandler {
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
 
-                if(Thread.currentThread().isInterrupted()) {
+                if (Thread.currentThread().isInterrupted()) {
                     this.out.close();
                     this.in.close();
                     socket.close();
