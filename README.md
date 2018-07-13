@@ -2,42 +2,60 @@
 
 Register a new user, in this example we register the user adrian as a new user.
 
-`REG adrian`
+```
+REG adrian CHAT/1.0
+Name: Adrian van den Houten
+```
 
-Responds with
- 
-`200 OK` user created
+Login with a user.
 
-`400 Bad request` user already exists
+```
+USE adrian CHAT/1.0
+```
 
-Login as an existing user. (To be simple, don't use athentication)
+List users
 
-`USE adrian`
+```
+LISTUSER CHAT/1.0
+```
+List users who are part of a group
+```
+LISTUSER chat CHAT/1.0
+```
+Example response:
 
-List registered users (registered users: adrian, josie)
+```
+adrian,josie
+```
 
-`LISTUSER`
+## Group management
 
-Responds with
+Create a group named 'chat' that is owned by user 'adrian'
 
-`adrian
-josie`
+```
+MK_GROUP chat:adrian CHAT/1.0
+```
 
-## Sending messages
+Add josie to our 'chat' group and give her a user role.
 
-Send a new message to a destination. A destination can be another user or a group.
+```
+ADD_USER chat CHAT/1.0
+Invite: josie:user,john:user
+```
 
-`SEND adrian:chat Hello everyone`
+## Messaging
 
-`SEND adrian:josie Hello josie`
+Send a direct message to Josie
 
+```
+SEND adrian:josie CHAT/1.0
 
-## Groups
+Hey josie! :)
+```
 
-Create a group name 'chat' and is owned by 'adrian'
+Send message on a group
+```
+SEND adrian:chat
 
-`MK_GROUP chat:adrian`
-
-Add josie to our group and give her a user role.
-
-`ADD_USER chat josie:user`
+Hello everyone
+```

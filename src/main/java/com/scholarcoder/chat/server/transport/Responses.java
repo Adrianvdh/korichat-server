@@ -1,4 +1,4 @@
-package com.scholarcoder.chat.server;
+package com.scholarcoder.chat.server.transport;
 
 public class Responses {
 

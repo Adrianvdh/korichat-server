@@ -1,34 +1,14 @@
-package com.scholarcoder.chat.server;
+package com.scholarcoder.chat.server.integration;
 
-import com.scholarcoder.chat.server.user.UserRepositorySingleton;
-import org.junit.After;
+import com.scholarcoder.chat.server.Client;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
-public class ServerTest {
-
-    private static String HOST = "localhost";
-    private static int PORT = 34567;
-
-    Server server;
-
-    @Before
-    public void setUp() {
-        server = new Server(PORT);
-        server.start();
-
-        UserRepositorySingleton.get().deleteAll();
-    }
-
-    @After
-    public void tearDown() {
-        server.stop();
-    }
+public class ServerUserManagementTest extends AbstractServerTest {
 
     @Test
     public void testRegisterUser() {
-        String command = "REG adrian";
+        String command = "REG adrian CHAT/1.0";
         String expectedResponse = "201 Created";
         Client client = new Client(HOST, PORT);
 
@@ -41,7 +21,7 @@ public class ServerTest {
 
     @Test
     public void testRegisterUserThatAlreadyExists() {
-        String command = "REG adrian";
+        String command = "REG adrian CHAT/1.0";
         String expectedResponse = "409 Conflict";
         Client client = new Client(HOST, PORT);
 
@@ -57,8 +37,8 @@ public class ServerTest {
     @Test
     public void testListRegisteredUsers() {
         Client client = new Client(HOST, PORT);
-        client.sendCommand("REG adrian");
-        client.sendCommand("REG josie");
+        client.sendCommand("REG adrian CHAT/1.0");
+        client.sendCommand("REG adrian CHAT/1.0");
 
         String command = "LISTUSER";
         String expectedResponse = "adrian,josie";
@@ -69,4 +49,5 @@ public class ServerTest {
 
         Assert.assertEquals(expectedResponse, response);
     }
+
 }
