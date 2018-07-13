@@ -12,9 +12,7 @@ public class ServerUserManagementTest extends AbstractServerTest {
         String expectedResponse = "201 Created";
         Client client = new Client(HOST, PORT);
 
-        System.out.println("Sending command");
         String response = client.sendCommand(command);
-        System.out.println("Finished sending command");
 
         Assert.assertEquals(expectedResponse, response);
     }
@@ -26,10 +24,8 @@ public class ServerUserManagementTest extends AbstractServerTest {
         Client client = new Client(HOST, PORT);
 
 
-        System.out.println("Sending command");
         client.sendCommand(command);
         String response = client.sendCommand(command);
-        System.out.println("Finished sending command");
 
         Assert.assertEquals(expectedResponse, response);
     }
@@ -38,14 +34,12 @@ public class ServerUserManagementTest extends AbstractServerTest {
     public void testListRegisteredUsers() {
         Client client = new Client(HOST, PORT);
         client.sendCommand("REG adrian CHAT/1.0");
-        client.sendCommand("REG adrian CHAT/1.0");
+        client.sendCommand("REG josie CHAT/1.0");
 
         String command = "LISTUSER";
         String expectedResponse = "adrian,josie";
 
-        System.out.println("Sending command");
         String response = client.sendCommand(command);
-        System.out.println("Finished sending command");
 
         Assert.assertEquals(expectedResponse, response);
     }
