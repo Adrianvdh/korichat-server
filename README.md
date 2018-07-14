@@ -31,9 +31,9 @@ CHAT/1.O 409 Conflict
 Login with a user. This enables a person to login-to the user and start sending messages or doing other
 stuff like creating groups.
 
+
 here are some commands that require you to be logged in:
 TODO
-
 
 ```
 USE adrian CHAT/1.0
@@ -47,6 +47,12 @@ Subsist requests to the server will require passing the session id to allow the 
 CHAT/1.0 200 OK
 Set-Cookie: SESSIONID: SOME SESSION ID
 ```
+Every connection to the server as a sessionId. SessionId's are bound to the TCP/IP connection of the client.
+For anonymous users, the session is not recoverable when the connection drops and a new session will be created.
+
+For users that login. The sessionId is used in every request to the server so that the server can identify a
+user's connection. If the user's connection is dropped, the next time the client sends a request, the server
+will attempt to bind the new connection to the user's same sessionId again.
 
 ### Listing users
 Listing registered users.
@@ -69,8 +75,12 @@ If there are existing users already registered on the server, we shall get a res
 ```
 CHAT/1.0 200 OK
 
-adrian
-josie
+{
+    "users": [
+        "adrian",
+        "josie"
+    ]
+}
 ```
 In this case, adrian and josie have been registered on the server.
 

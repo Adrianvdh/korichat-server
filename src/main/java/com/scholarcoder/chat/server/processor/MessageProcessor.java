@@ -2,16 +2,8 @@ package com.scholarcoder.chat.server.processor;
 
 import com.scholarcoder.chat.server.processor.commands.CommandHandler;
 import com.scholarcoder.chat.server.processor.commands.CommandHandlersSingleton;
-import com.scholarcoder.chat.server.processor.commands.ListUserCommand;
-import com.scholarcoder.chat.server.processor.commands.RegisterUserCommand;
-import com.scholarcoder.chat.server.user.User;
-import com.scholarcoder.chat.server.user.UserAlreadyExistsException;
-import com.scholarcoder.chat.server.user.UserRepository;
-import com.scholarcoder.chat.server.user.UserRepositorySingleton;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class MessageProcessor {
     private List<CommandHandler> commandHandlers;
@@ -25,13 +17,20 @@ public class MessageProcessor {
         for (CommandHandler commandHandler : commandHandlers) {
             if(commandHandler.applicable(payload.command)) {
                 String response = commandHandler.doPerform(payload.body);
-                return response;
+                String decoratedResponse = decorateResponse(response);
+                return decoratedResponse;
             }
         }
         return "405 Command Not Allowed";
     }
 
+    private String decorateResponse(String response) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("CHAT/1.0 " + response);
 
+
+        return stringBuilder.toString();
+    }
 
     static class Payload {
         public String command;

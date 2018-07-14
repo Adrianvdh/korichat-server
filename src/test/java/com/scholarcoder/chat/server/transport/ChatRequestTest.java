@@ -1,11 +1,7 @@
 package com.scholarcoder.chat.server.transport;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ChatRequestTest {
 
@@ -52,16 +48,5 @@ public class ChatRequestTest {
 
         Assert.assertEquals(expectedChatRequest, actualChatRequest);
 
-    }
-
-    @Ignore
-    @Test(expected = InvalidChatRequestException.class)
-    public void testParseInvalidRequest() {
-        String request = " chat CHAT/1.0\n" +
-                "Invite: \n" +
-                "\n" +
-                "Hello world";
-
-        ChatRequest.fromRequest(request);
     }
 }
