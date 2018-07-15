@@ -1,9 +1,10 @@
-package com.scholarcoder.chat.server.integration;
+package com.scholarcoder.chat.server.transport;
 
 import lombok.Data;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,22 +16,44 @@ public class ChatResponse {
 
     private String body;
 
+    public ChatResponse() {
+        headers = new HashMap<>();
+    }
+
     public void setStatusCode(String statusCode) {
         this.statusCode = statusCode;
     }
 
     public void addHeader(String name, String value) {
-        if (headers == null) {
-            headers = new HashMap<>();
-        }
         headers.put(name, value);
     }
 
     public void addCookie(String name, String value) {
-        if (headers == null) {
-            headers = new HashMap<>();
-        }
         headers.put("Set-Cookie", name + "=" + value);
+    }
+
+    public String asStringPayload() {
+        StringBuilder responseBuilder = new StringBuilder();
+        responseBuilder.append("CHAT/1.0 ").append(statusCode);
+
+        if (!headers.isEmpty()) {
+            responseBuilder.append("\n");
+        }
+        AtomicInteger headerCounter = new AtomicInteger();
+        headers.forEach((key, value) -> {
+            headerCounter.getAndIncrement();
+            responseBuilder.append(key).append(": ").append(value);
+            if(headerCounter.get() != headers.size()) {
+                responseBuilder.append("\n");
+            }
+        });
+
+        if (body != null && !body.isEmpty()) {
+            responseBuilder.append("\n\n");
+            responseBuilder.append(body);
+        }
+
+        return responseBuilder.toString();
     }
 
     public static ChatResponse fromResponse(String response) {

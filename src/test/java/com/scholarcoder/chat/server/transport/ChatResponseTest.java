@@ -1,51 +1,72 @@
 package com.scholarcoder.chat.server.transport;
 
-import com.scholarcoder.chat.server.integration.ChatResponse;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class ChatResponseTest {
 
     @Test
-    public void testParseResponse() {
-        String response = "CHAT/1.O 201 Created";
+    public void testGetResponseAsString() {
+        String expectedResponse = "CHAT/1.0 200 OK";
 
-        ChatResponse expectedChatResponse = new ChatResponse();
-        expectedChatResponse.setStatusCode("201 Created");
+        ChatResponse chatResponse = new ChatResponse();
+        chatResponse.setStatusCode(Responses.OK);
 
-        ChatResponse chatResponse = ChatResponse.fromResponse(response);
+        String actualResponse = chatResponse.asStringPayload();
 
-        Assert.assertEquals(expectedChatResponse, chatResponse);
-    }
-
-    @Test
-    public void testParseChatResponseWithCookies() {
-        String response = "CHAT/1.0 200 OK\n" +
-                "Set-Cookie: someCookie=cookieValue";
-
-        ChatResponse expectedChatResponse = new ChatResponse();
-        expectedChatResponse.setStatusCode("200 OK");
-        expectedChatResponse.addCookie("someCookie", "cookieValue");
-
-        ChatResponse chatResponse = ChatResponse.fromResponse(response);
-
-        Assert.assertEquals(expectedChatResponse, chatResponse);
+        Assert.assertEquals(expectedResponse, actualResponse);
 
     }
 
     @Test
-    public void testParseChatResponseWithBody() {
-        String response = "CHAT/1.0 200 OK\n" +
-                "\n" +
-                "adrian," +
-                "josie";
+    public void testGetResponseAsString_WithHeadersOnly() {
+        String expectedResponse = "CHAT/1.0 200 OK\n"
+                + "Header: some value\n"
+                + "Header2: new Value";
 
-        ChatResponse expectedChatResponse = new ChatResponse();
-        expectedChatResponse.setStatusCode("200 OK");
-        expectedChatResponse.setBody("adrian,josie");
+        ChatResponse chatResponse = new ChatResponse();
+        chatResponse.setStatusCode(Responses.OK);
+        chatResponse.addHeader("Header", "some value");
+        chatResponse.addHeader("Header2", "new Value");
 
-        ChatResponse chatResponse = ChatResponse.fromResponse(response);
+        String actualResponse = chatResponse.asStringPayload();
 
-        Assert.assertEquals(expectedChatResponse, chatResponse);
+        Assert.assertEquals(expectedResponse, actualResponse);
     }
+
+
+    @Test
+    public void testGetResponseAsString_WithBodyOnly() {
+        String expectedResponse = "CHAT/1.0 200 OK\n"
+                + "\n"
+                + "Some body payload";
+
+        ChatResponse chatResponse = new ChatResponse();
+        chatResponse.setStatusCode(Responses.OK);
+        chatResponse.setBody("Some body payload");
+
+        String actualResponse = chatResponse.asStringPayload();
+
+        Assert.assertEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    public void testGetResponseAsString_WithHeadersAndBody() {
+        String expectedResponse = "CHAT/1.0 200 OK\n"
+                + "Header: some value\n"
+                + "Header2: new Value\n"
+                + "\n"
+                + "Some body payload";
+
+        ChatResponse chatResponse = new ChatResponse();
+        chatResponse.setStatusCode(Responses.OK);
+        chatResponse.addHeader("Header", "some value");
+        chatResponse.addHeader("Header2", "new Value");
+        chatResponse.setBody("Some body payload");
+
+        String actualResponse = chatResponse.asStringPayload();
+
+        Assert.assertEquals(expectedResponse, actualResponse);
+    }
+
 }
