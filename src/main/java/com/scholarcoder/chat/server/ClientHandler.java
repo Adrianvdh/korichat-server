@@ -51,7 +51,7 @@ public class ClientHandler {
                     socket.close();
                     break;
                 }
-                // TODO handle multiline response
+                // TODO handle multiline request
                 String response = messageProcessor.process(inputLine);
                 out.println(response);
             }
