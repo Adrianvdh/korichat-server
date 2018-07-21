@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -23,7 +24,7 @@ public class ChatRequest {
 
     public void setRequestLine(String method, String metaData) {
         this.method = method;
-        this.method = metaData;
+        this.metaData = metaData;
     }
 
     public void putHeader(String headerName, String headeralue) {
@@ -61,11 +62,21 @@ public class ChatRequest {
     private static void setChatRequest_RequestLine(String requestLine, ChatRequest chatRequest) {
         // TODO 14/07/18: Validate request line
         String[] requestLineTokens = requestLine.split(" ");
+        // method is mandatory, meta is optional and protocol version is mandatory
+
         String method = requestLineTokens[0];
-        String metadata = requestLineTokens[1];
+        String metaData = null;
+        String protocolVersion = null;
+        if (requestLineTokens.length == 2 && Arrays.asList(requestLineTokens).contains("CHAT/1.0")) {
+            protocolVersion = requestLineTokens[1];
+        }
+        if (requestLineTokens.length == 3 && Arrays.asList(requestLineTokens).contains("CHAT/1.0")) {
+            metaData = requestLineTokens[1];
+            protocolVersion = requestLineTokens[2];
+        }
+
         // TODO 14/07/18: Validate chat protocol version
-        String protocolVersion = requestLineTokens[2];
-        chatRequest.setRequestLine(method, metadata);
+        chatRequest.setRequestLine(method, metaData);
     }
 
     private static void extractResponseHeader(ChatRequest chatRequest, String property) {
@@ -91,7 +102,7 @@ public class ChatRequest {
         while (matcher.find()) {
             headerValue = matcher.group(0);
         }
-        return new String[] { headerName, headerValue };
+        return new String[]{headerName, headerValue};
     }
 
     private static String extractHeaderName(String headerLine) {

@@ -1,12 +1,9 @@
 package com.scholarcoder.chat.server.integration;
 
 import com.scholarcoder.chat.server.Client;
-import com.scholarcoder.chat.server.transport.ChatResponse;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import java.util.UUID;
 
 public class ServerUserManagementTest extends AbstractServerTest {
 
@@ -21,23 +18,6 @@ public class ServerUserManagementTest extends AbstractServerTest {
         Assert.assertEquals(expectedResponse, response);
     }
 
-    @Ignore
-    @Test
-    public void testUseUser_expectSessionResponseLooksLikeAppropriateResponse() {
-        Client client = new Client(HOST, PORT);
-        client.sendCommand("REG adrian CHAT/1.0");
-
-        String command = "CHAT/1.0 USE adrian";
-
-        String expectedResponseRegex = "CHAT/1.0 200 OK\n"
-                + "SESSIONID: " + uuidRegexMatcher();
-
-        String actualResponse = client.sendCommand(command);
-
-        Assert.assertTrue(actualResponse.matches(expectedResponseRegex));
-    }
-
-    @Ignore
     @Test
     public void testRegisterUserThatAlreadyExists() {
         String command = "REG adrian CHAT/1.0";
@@ -51,7 +31,40 @@ public class ServerUserManagementTest extends AbstractServerTest {
     }
 
 
+    @Test
+    public void testListRegisteredUsers() {
+        Client client = new Client(HOST, PORT);
+        client.sendCommand("REG adrian CHAT/1.0");
+        client.sendCommand("REG josie CHAT/1.0");
+
+        String expectedResponse = "CHAT/1.0 200 OK\n"
+                + "\n"
+                + "adrian,josie";
+
+        String response = client.sendCommand("LISTUSER CHAT/1.0");
+
+        Assert.assertEquals(expectedResponse, response);
+
+    }
+
+    @Ignore
+    @Test
+    public void testUseUser_expectSessionResponseLooksLikeAppropriateResponse() {
+        Client client = new Client(HOST, PORT);
+        client.sendCommand("REG adrian CHAT/1.0");
+
+        String command = "CHAT/1.0 USE adrian";
+
+        String expectedResponseRegex = "CHAT/1.0 200 OK\n"
+                + "Set-Cookie: SESSIONID=" + uuidRegexMatcher();
+
+        String actualResponse = client.sendCommand(command);
+
+        Assert.assertTrue(actualResponse.matches(expectedResponseRegex));
+    }
+
     private String uuidRegexMatcher() {
         return "[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}";
     }
+
 }

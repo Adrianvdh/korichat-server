@@ -1,5 +1,8 @@
 package com.scholarcoder.chat.server.processor.commands;
 
+import com.scholarcoder.chat.server.transport.ChatRequest;
+import com.scholarcoder.chat.server.transport.ChatResponse;
+import com.scholarcoder.chat.server.transport.Responses;
 import com.scholarcoder.chat.server.user.UserAlreadyExistsException;
 import com.scholarcoder.chat.server.user.UserRepository;
 
@@ -19,15 +22,14 @@ public class RegisterUserCommand implements CommandHandler {
     }
 
     @Override
-    public String doPerform(String payloadBody) {
-        String username = payloadBody;
+    public void doPerform(ChatRequest request, ChatResponse response) {
+        String username = request.getMetaData();
         try {
             userRepository.add(username);
-            return "201 Created";
+            response.setStatusCode(Responses.CREATED);
 
         } catch (UserAlreadyExistsException e) {
-            return "409 Conflict";
+            response.setStatusCode(Responses.CONFLICT);
         }
     }
-
 }

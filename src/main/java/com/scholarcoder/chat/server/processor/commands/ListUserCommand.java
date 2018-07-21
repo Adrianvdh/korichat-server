@@ -1,5 +1,8 @@
 package com.scholarcoder.chat.server.processor.commands;
 
+import com.scholarcoder.chat.server.transport.ChatRequest;
+import com.scholarcoder.chat.server.transport.ChatResponse;
+import com.scholarcoder.chat.server.transport.Responses;
 import com.scholarcoder.chat.server.user.User;
 import com.scholarcoder.chat.server.user.UserRepository;
 
@@ -21,12 +24,13 @@ public class ListUserCommand implements CommandHandler {
     }
 
     @Override
-    public String doPerform(String payloadBody) {
+    public void doPerform(ChatRequest request, ChatResponse response) {
         List<User> users = userRepository.findAll();
         String userListString = users.stream().map(User::getUsername).collect(Collectors.joining(","));
         if(userListString.isEmpty()) {
-            return "204 No Content";
+            response.setStatusCode(Responses.NO_CONTENT);
         }
-        return userListString;
+        response.setStatusCode(Responses.OK);
+        response.setBody(userListString);
     }
 }
