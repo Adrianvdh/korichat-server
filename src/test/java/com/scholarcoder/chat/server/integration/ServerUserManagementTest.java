@@ -47,18 +47,20 @@ public class ServerUserManagementTest extends AbstractServerTest {
 
     }
 
-    @Ignore
     @Test
     public void testUseUser_expectSessionResponseLooksLikeAppropriateResponse() {
         Client client = new Client(HOST, PORT);
         client.sendCommand("REG adrian CHAT/1.0");
 
-        String command = "CHAT/1.0 USE adrian";
+        String command = "USE adrian CHAT/1.0";
 
         String expectedResponseRegex = "CHAT/1.0 200 OK\n"
                 + "Set-Cookie: SESSIONID=" + uuidRegexMatcher();
 
         String actualResponse = client.sendCommand(command);
+
+        System.out.println("Server response:");
+        System.out.println(actualResponse);
 
         Assert.assertTrue(actualResponse.matches(expectedResponseRegex));
     }

@@ -9,8 +9,7 @@ public class Session {
     private String sessionId;
     private String username;
 
-    public Session(String username) {
-        this.username = username;
-        this.sessionId = UUID.randomUUID().toString();
+    public Session() {
+        sessionId = UUID.randomUUID().toString();
     }
 }

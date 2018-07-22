@@ -35,6 +35,15 @@ public class UserRepositoryTest {
         Assert.assertEquals(username, user.getUsername());
     }
 
+    @Test
+    public void testFindUserThatDoesnotExist() {
+        String username = "someuser";
+
+        User user = userRepository.findByUsername(username);
+
+        Assert.assertNull(user);
+    }
+
     @Test(expected = UserAlreadyExistsException.class)
     public void testAddUserThatAlreadyExists() throws Exception {
         String username = "adrian";

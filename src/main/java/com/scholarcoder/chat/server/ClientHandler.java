@@ -1,7 +1,6 @@
 package com.scholarcoder.chat.server;
 
 import com.scholarcoder.chat.server.processor.MessageProcessor;
-import com.scholarcoder.chat.server.processor.commands.CommandHandlersSingleton;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -1,65 +1,90 @@
 package com.scholarcoder.chat.server.store.session;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
-import java.util.concurrent.Future;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 public class SessionStoreTest {
 
+    SessionStore sessionStore;
+
+    @Before
+    public void setUp() throws Exception {
+        sessionStore = SessionStoreSingelton.get();
+
+        sessionStore.clear();
+    }
+
     @Test
     public void getSessionStore() {
-        SessionStore sessionStore = SessionStoreSingelton.get();
-
         Assert.assertNotNull(sessionStore);
     }
 
     @Test
-    public void testPutSession() {
-        SessionStore sessionStore = new SessionStore();
+    public void testSessionIdIsCreated() {
+        Session session = new Session();
 
-        Session session = new Session("adrian");
-        Future mockFuture = Mockito.mock(Future.class);
+        final String sessionId = session.getSessionId();
 
-        sessionStore.putConnectionHandle(session, mockFuture);
-
-        Future clientHandle = sessionStore.getClientHandle(session);
-
-        Assert.assertEquals(mockFuture, clientHandle);
+        Assert.assertNotNull(sessionId);
     }
 
     @Test
-    public void testHotswapSessionId() {
-        Session currentSession = new Session("adrian");
-        Session newSession = new Session("josie");
-        Future mockFuture = Mockito.mock(Future.class);
-        SessionStore sessionStore = new SessionStore();
+    public void testCreateSession_andFindBySessionId() {
+        Session session = new Session();
+        session.setUsername("adrian");
+        String sessionId = session.getSessionId();
 
-        sessionStore.putConnectionHandle(currentSession, mockFuture);
+        sessionStore.putSession(session);
 
-        sessionStore.hotswapSessionId(currentSession, newSession);
+        Session actualSession = sessionStore.findBySessionId(sessionId);
 
-        Future clientHandle = sessionStore.getClientHandle(newSession);
-
-        Assert.assertEquals(mockFuture, clientHandle);
-        assertOriginalSessionDoesNotExist(currentSession, sessionStore);
+        Assert.assertEquals(session, actualSession);
     }
 
-    private void assertOriginalSessionDoesNotExist(Session currentSession, SessionStore sessionStore) {
-        awaitAssertion(1000, () -> Assert.assertNull(sessionStore.getClientHandle(currentSession)));
+    @Test
+    public void testFindByUsername() {
+        Session session = new Session();
+        session.setUsername("adrian");
+
+        sessionStore.putSession(session);
+
+        Session actualSession = sessionStore.findByUsername("adrian");
+
+        Assert.assertEquals(session, actualSession);
     }
 
-    private void awaitAssertion(int waitPeriod, Runnable runnable) {
-        Thread thread = new Thread(() -> {
-            try {
-                Thread.sleep(waitPeriod);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            runnable.run();
-        });
-        thread.start();
+    @Test(expected = SessionNotFoundException.class)
+    public void testFindBySessionId_sessionIdNotFound() {
+        String randomId = UUID.randomUUID().toString();
+
+        sessionStore.findBySessionId(randomId);
+
+    }
+
+    @Test(expected = SessionNotFoundException.class)
+    public void testFindByUsername_sessionIdNotFound() {
+        sessionStore.findByUsername("adrian");
+    }
+
+    @Test
+    public void testClearAllSessions() {
+        Session session = new Session();
+        session.setUsername("adrian");
+        sessionStore.putSession(session);
+
+        Collection<Session> allSessions = sessionStore.findAll();
+
+        Assert.assertEquals(1, allSessions.size());
+
+        sessionStore.clear();
+        allSessions = sessionStore.findAll();
+
+        Assert.assertEquals(0, allSessions.size());
     }
 
 }

@@ -1,7 +1,7 @@
 package com.scholarcoder.chat.server.processor;
 
 import com.scholarcoder.chat.server.processor.commands.CommandHandler;
-import com.scholarcoder.chat.server.processor.commands.CommandHandlersSingleton;
+import com.scholarcoder.chat.server.processor.commands.CommandHandlersRegistry;
 import com.scholarcoder.chat.server.transport.ChatRequest;
 import com.scholarcoder.chat.server.transport.ChatResponse;
 
@@ -11,7 +11,7 @@ public class MessageProcessor {
     private List<CommandHandler> commandHandlers;
 
     public MessageProcessor() {
-        this.commandHandlers = CommandHandlersSingleton.getRegisteredCommandHandlers();
+        this.commandHandlers = CommandHandlersRegistry.getRegisteredCommandHandlers();
     }
 
     public String process(String message) {
@@ -20,8 +20,8 @@ public class MessageProcessor {
         for (CommandHandler commandHandler : commandHandlers) {
             if(commandHandler.applicable(chatRequest.getMethod())) {
                 ChatResponse chatResponse = new ChatResponse();
-                commandHandler.doPerform(chatRequest, chatResponse);
 
+                commandHandler.doPerform(chatRequest, chatResponse);
                 return chatResponse.asStringPayload();
             }
         }
