@@ -12,7 +12,8 @@ public class ChatResponseTest {
         ChatResponse chatResponse = new ChatResponse();
         chatResponse.setStatusCode(Responses.OK);
 
-        String actualResponse = chatResponse.asStringPayload();
+        ResponseService responseService = new ResponseService();
+        String actualResponse = responseService.deserializeAsString(chatResponse);
 
         Assert.assertEquals(expectedResponse, actualResponse);
 
@@ -29,7 +30,8 @@ public class ChatResponseTest {
         chatResponse.addHeader("Header", "some value");
         chatResponse.addHeader("Header2", "new Value");
 
-        String actualResponse = chatResponse.asStringPayload();
+        ResponseService responseService = new ResponseService();
+        String actualResponse = responseService.deserializeAsString(chatResponse);
 
         Assert.assertEquals(expectedResponse, actualResponse);
     }
@@ -45,7 +47,8 @@ public class ChatResponseTest {
         chatResponse.setStatusCode(Responses.OK);
         chatResponse.setBody("Some body payload");
 
-        String actualResponse = chatResponse.asStringPayload();
+        ResponseService responseService = new ResponseService();
+        String actualResponse = responseService.deserializeAsString(chatResponse);
 
         Assert.assertEquals(expectedResponse, actualResponse);
     }
@@ -64,7 +67,8 @@ public class ChatResponseTest {
         chatResponse.addHeader("Header2", "new Value");
         chatResponse.setBody("Some body payload");
 
-        String actualResponse = chatResponse.asStringPayload();
+        ResponseService responseService = new ResponseService();
+        String actualResponse = responseService.deserializeAsString(chatResponse);
 
         Assert.assertEquals(expectedResponse, actualResponse);
     }

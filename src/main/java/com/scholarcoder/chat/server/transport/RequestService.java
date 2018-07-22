@@ -30,7 +30,6 @@ public class RequestService {
         return chatRequest;
     }
 
-
     private boolean beforeBodySection(String property) {
         return "".equals(property);
     }

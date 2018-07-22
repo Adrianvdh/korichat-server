@@ -5,6 +5,7 @@ import com.scholarcoder.chat.server.processor.commands.CommandHandlersRegistry;
 import com.scholarcoder.chat.server.transport.ChatRequest;
 import com.scholarcoder.chat.server.transport.ChatResponse;
 import com.scholarcoder.chat.server.transport.RequestService;
+import com.scholarcoder.chat.server.transport.ResponseService;
 
 import java.util.List;
 
@@ -24,7 +25,11 @@ public class MessageProcessor {
                 ChatResponse chatResponse = new ChatResponse();
 
                 commandHandler.doPerform(chatRequest, chatResponse);
-                return chatResponse.asStringPayload();
+
+                ResponseService responseService = new ResponseService();
+                String responseMessage = responseService.deserializeAsString(chatResponse);
+
+                return responseMessage;
             }
         }
         return "405 Command Not Allowed";
