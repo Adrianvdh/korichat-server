@@ -26,7 +26,9 @@ public class RequestService {
         setHeadersAndBody(requestLines, chatRequest);
 
         final Map<String, String> requestHeaders = chatRequest.getHeaders();
-        injectSessionIfSessionHeaderExists(chatRequest, requestHeaders);
+        if(requestHeaders != null) {
+            injectSessionIfSessionHeaderExists(chatRequest, requestHeaders);
+        }
 
         return chatRequest;
     }

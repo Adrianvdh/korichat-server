@@ -2,10 +2,7 @@ package com.scholarcoder.chat.server;
 
 import com.scholarcoder.chat.server.processor.MessageProcessor;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 
 public class ClientHandler {
@@ -50,14 +47,33 @@ public class ClientHandler {
                     socket.close();
                     break;
                 }
-                // TODO handle multiline request
-                String response = messageProcessor.process(inputLine);
+                String response;
+                try {
+                    response = messageProcessor.process(inputLine);
+                }
+                catch (Throwable t) {
+                    StringBuilder exceptionStringBuilder = new StringBuilder();
+                    exceptionStringBuilder.append("500 Internal Server Error!").append(System.lineSeparator());
+
+                    String stackTrace = convertStackTraceToString(t);
+                    exceptionStringBuilder.append(stackTrace);
+
+                    response = exceptionStringBuilder.toString();
+                }
                 out.println(response);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+    }
+
+    private String convertStackTraceToString(Throwable t) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        t.printStackTrace(pw);
+
+        return sw.toString();
     }
 
     public void sendMessage(String message) {
