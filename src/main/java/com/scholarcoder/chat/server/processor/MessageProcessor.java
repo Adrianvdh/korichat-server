@@ -4,6 +4,7 @@ import com.scholarcoder.chat.server.processor.commands.CommandHandler;
 import com.scholarcoder.chat.server.processor.commands.CommandHandlersRegistry;
 import com.scholarcoder.chat.server.transport.ChatRequest;
 import com.scholarcoder.chat.server.transport.ChatResponse;
+import com.scholarcoder.chat.server.transport.RequestService;
 
 import java.util.List;
 
@@ -15,7 +16,8 @@ public class MessageProcessor {
     }
 
     public String process(String message) {
-        ChatRequest chatRequest = ChatRequest.fromRequest(message);
+        RequestService requestService = new RequestService();
+        ChatRequest chatRequest = requestService.parseRequestMessage(message);
 
         for (CommandHandler commandHandler : commandHandlers) {
             if(commandHandler.applicable(chatRequest.getMethod())) {
