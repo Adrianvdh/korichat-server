@@ -9,10 +9,12 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@NoArgsConstructor
 public class RequestService {
 
     private SessionStore sessionStore;
+
+    public RequestService() {
+    }
 
     public RequestService(SessionStore sessionStore) {
         this.sessionStore = sessionStore;
