@@ -1,7 +1,6 @@
 package com.scholarcoder.chat.server.transport;
 
 import com.scholarcoder.chat.server.store.session.Session;
-import com.scholarcoder.chat.server.store.session.SessionStore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

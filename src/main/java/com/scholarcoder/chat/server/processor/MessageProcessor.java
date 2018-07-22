@@ -20,18 +20,22 @@ public class MessageProcessor {
         RequestService requestService = new RequestService();
         ChatRequest chatRequest = requestService.parseRequestMessage(message);
 
+        ChatResponse chatResponse = new ChatResponse();
+        boolean foundApplicableHandler = false;
         for (CommandHandler commandHandler : commandHandlers) {
-            if(commandHandler.applicable(chatRequest.getMethod())) {
-                ChatResponse chatResponse = new ChatResponse();
-
+            if (commandHandler.applicable(chatRequest.getMethod())) {
                 commandHandler.doPerform(chatRequest, chatResponse);
-
-                ResponseService responseService = new ResponseService();
-                String responseMessage = responseService.deserializeAsString(chatResponse);
-
-                return responseMessage;
+                foundApplicableHandler = true;
+                break;
             }
         }
-        return "405 Command Not Allowed";
+        if (!foundApplicableHandler) {
+            chatResponse.setStatusCode("405 Command Not Allowed");
+        }
+
+        ResponseService responseService = new ResponseService();
+        String responseMessage = responseService.serializeAsString(chatResponse);
+
+        return responseMessage;
     }
 }

@@ -7,6 +7,19 @@ import org.junit.Test;
 
 public class ServerUserManagementTest extends AbstractServerTest {
 
+
+    @Test
+    public void testNotAllowedMethod() {
+        Client client = new Client(HOST, PORT);
+        String expectedResponse = "CHAT/1.0 405 Command Not Allowed";
+
+        String command = "NOTEXISTANT sometmeta CHAT/1.0";
+        String response = client.sendCommand(command);
+
+        Assert.assertEquals(expectedResponse, response);
+
+    }
+
     @Test
     public void testRegisterUser() {
         Client client = new Client(HOST, PORT);

@@ -2,7 +2,6 @@ package com.scholarcoder.chat.server.transport;
 
 import com.scholarcoder.chat.server.store.session.Session;
 import com.scholarcoder.chat.server.store.session.SessionStore;
-import lombok.NoArgsConstructor;
 
 import java.util.Arrays;
 import java.util.Map;

@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ResponseService {
 
-    public String deserializeAsString(ChatResponse chatResponse) {
+    public String serializeAsString(ChatResponse chatResponse) {
         final Map<String, String> headers = chatResponse.getHeaders();
         final String body = chatResponse.getBody();
 
