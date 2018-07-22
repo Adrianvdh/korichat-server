@@ -1,17 +1,48 @@
 package com.scholarcoder.chat.server.transport;
 
+import com.scholarcoder.chat.server.store.session.Session;
+import com.scholarcoder.chat.server.store.session.SessionStore;
+import lombok.NoArgsConstructor;
+
 import java.util.Arrays;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@NoArgsConstructor
 public class RequestService {
+
+    private SessionStore sessionStore;
+
+    public RequestService(SessionStore sessionStore) {
+        this.sessionStore = sessionStore;
+    }
 
     public ChatRequest parseRequestMessage(String requestMessage) {
         String[] requestLines = requestMessage.split("\n");
 
         ChatRequest chatRequest = new ChatRequest();
         setRequestLine(requestLines[0], chatRequest);
+        setHeadersAndBody(requestLines, chatRequest);
 
+        final Map<String, String> requestHeaders = chatRequest.getHeaders();
+        injectSessionIfSessionHeaderExists(chatRequest, requestHeaders);
+
+        return chatRequest;
+    }
+
+    private void injectSessionIfSessionHeaderExists(ChatRequest chatRequest, Map<String, String> requestHeaders) {
+        if(requestHeaders.containsKey("SESSIONID")) {
+            String sessionId = requestHeaders.get("SESSIONID");
+
+            Session session = sessionStore.findBySessionId(sessionId);
+            if(session != null) {
+                chatRequest.setSession(session);
+            }
+        }
+    }
+
+    private void setHeadersAndBody(String[] requestLines, ChatRequest chatRequest) {
         boolean atBody = false;
         for (String property : requestLines) {
             if (property == requestLines[0]) {
@@ -27,11 +58,6 @@ public class RequestService {
                 extractResponseHeader(chatRequest, property);
             }
         }
-        return chatRequest;
-    }
-
-    private boolean beforeBodySection(String property) {
-        return "".equals(property);
     }
 
     private void setRequestLine(String requestLine, ChatRequest chatRequest) {
@@ -40,7 +66,7 @@ public class RequestService {
         // method is mandatory, meta is optional and protocol version is mandatory
 
         String method = requestLineTokens[0];
-        String metaData = null;
+        String metaData = "";
         String protocolVersion = null;
         if (requestLineTokens.length == 2 && Arrays.asList(requestLineTokens).contains("CHAT/1.0")) {
             protocolVersion = requestLineTokens[1];
@@ -52,6 +78,10 @@ public class RequestService {
 
         // TODO 14/07/18: Validate chat protocol version
         chatRequest.setRequestLine(method, metaData);
+    }
+
+    private boolean beforeBodySection(String property) {
+        return "".equals(property);
     }
 
     private void extractResponseHeader(ChatRequest chatRequest, String property) {

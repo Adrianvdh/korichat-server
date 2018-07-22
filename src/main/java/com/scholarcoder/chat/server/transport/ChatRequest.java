@@ -1,5 +1,7 @@
 package com.scholarcoder.chat.server.transport;
 
+import com.scholarcoder.chat.server.store.session.Session;
+import com.scholarcoder.chat.server.store.session.SessionStore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,6 +18,8 @@ public class ChatRequest {
     private Map<String, String> headers;
     private String body;
 
+    private Session session;
+
     public ChatRequest() {
     }
 
@@ -30,5 +34,9 @@ public class ChatRequest {
         }
 
         headers.put(headerName, headeralue);
+    }
+
+    protected void setSession(Session session) {
+        this.session = session;
     }
 }

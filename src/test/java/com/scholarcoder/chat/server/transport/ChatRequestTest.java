@@ -1,7 +1,12 @@
 package com.scholarcoder.chat.server.transport;
 
+import com.scholarcoder.chat.server.store.session.Session;
+import com.scholarcoder.chat.server.store.session.SessionStore;
+import com.scholarcoder.chat.server.store.session.SessionStoreSingelton;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.UUID;
 
 public class ChatRequestTest {
 
@@ -52,4 +57,30 @@ public class ChatRequestTest {
         Assert.assertEquals(expectedChatRequest, actualChatRequest);
 
     }
+
+    @Test
+    public void testGetSessionFromRequest() {
+        Session session = new Session();
+        String sessionId = session.getSessionId();
+
+        SessionStore sessionStore = SessionStoreSingelton.get();
+        sessionStore.putSession(session);
+
+        String requestMessage = "LISTUSER CHAT/1.0\n" +
+                "SESSIONID: " + sessionId;
+
+        RequestService requestService = new RequestService(sessionStore);
+        ChatRequest actualChatRequest = requestService.parseRequestMessage(requestMessage);
+
+        ChatRequest expectedChatRequest = new ChatRequest();
+        expectedChatRequest.setRequestLine("LISTUSER", "");
+        expectedChatRequest.putHeader("SESSIONID", sessionId);
+        expectedChatRequest.setSession(session);
+
+        Assert.assertEquals(expectedChatRequest, actualChatRequest);
+
+    }
+
+
+
 }
