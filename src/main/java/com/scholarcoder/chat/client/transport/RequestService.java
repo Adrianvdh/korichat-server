@@ -19,7 +19,7 @@ public class RequestService {
         this.sessionStore = sessionStore;
     }
 
-    public ChatRequest parseRequestMessage(String requestMessage) {
+    public ChatRequest deserializeRequestMessage(String requestMessage) {
         String[] requestLines = requestMessage.split("\n");
 
         ChatRequest chatRequest = new ChatRequest();

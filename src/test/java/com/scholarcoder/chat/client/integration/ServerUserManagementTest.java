@@ -3,10 +3,7 @@ package com.scholarcoder.chat.client.integration;
 import com.scholarcoder.chat.client.Client;
 import com.scholarcoder.chat.client.Server;
 import com.scholarcoder.chat.client.user.UserRepositorySingleton;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 public class ServerUserManagementTest {
 
@@ -101,6 +98,7 @@ public class ServerUserManagementTest {
     }
 
 
+    @Ignore
     @Test
     public void testListRegisteredUsers_requiresAuthentication_succeeds() {
         client.sendCommand("REG adrian CHAT/1.0");

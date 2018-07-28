@@ -18,7 +18,7 @@ public class MessageProcessor {
 
     public String process(String message) {
         RequestService requestService = new RequestService();
-        ChatRequest chatRequest = requestService.parseRequestMessage(message);
+        ChatRequest chatRequest = requestService.deserializeRequestMessage(message);
 
         ChatResponse chatResponse = new ChatResponse();
         boolean foundApplicableHandler = false;

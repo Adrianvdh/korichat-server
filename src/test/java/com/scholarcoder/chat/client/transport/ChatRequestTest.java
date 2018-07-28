@@ -16,7 +16,7 @@ public class ChatRequestTest {
         expectedChatRequest.setRequestLine("REG", "adrian");
 
         RequestService requestService = new RequestService();
-        ChatRequest actualChatRequest = requestService.parseRequestMessage(requestMessage);
+        ChatRequest actualChatRequest = requestService.deserializeRequestMessage(requestMessage);
 
         Assert.assertEquals(expectedChatRequest, actualChatRequest);
     }
@@ -31,7 +31,7 @@ public class ChatRequestTest {
         expectedChatRequest.addHeader("Invite", "josie:user,john:user");
 
         RequestService requestService = new RequestService();
-        ChatRequest actualChatRequest = requestService.parseRequestMessage(requestMessage);
+        ChatRequest actualChatRequest = requestService.deserializeRequestMessage(requestMessage);
 
         Assert.assertEquals(expectedChatRequest, actualChatRequest);
 
@@ -50,7 +50,7 @@ public class ChatRequestTest {
         expectedChatRequest.setBody("Hello world");
 
         RequestService requestService = new RequestService();
-        ChatRequest actualChatRequest = requestService.parseRequestMessage(requestMessage);
+        ChatRequest actualChatRequest = requestService.deserializeRequestMessage(requestMessage);
 
         Assert.assertEquals(expectedChatRequest, actualChatRequest);
 
@@ -68,7 +68,7 @@ public class ChatRequestTest {
                 "SESSIONID: " + sessionId;
 
         RequestService requestService = new RequestService(sessionStore);
-        ChatRequest actualChatRequest = requestService.parseRequestMessage(requestMessage);
+        ChatRequest actualChatRequest = requestService.deserializeRequestMessage(requestMessage);
 
         ChatRequest expectedChatRequest = new ChatRequest();
         expectedChatRequest.setRequestLine("LISTUSER", "");

@@ -1,7 +1,6 @@
 package com.scholarcoder.chat.client.transport;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.scholarcoder.chat.client.transport.ServiceUtil.setHeadersAndBody;
 
@@ -16,15 +15,17 @@ public class ResponseService {
 
         if (!headers.isEmpty()) {
             responseBuilder.append("\n");
-        }
-        AtomicInteger headerCounter = new AtomicInteger();
-        headers.forEach((key, value) -> {
-            headerCounter.getAndIncrement();
-            responseBuilder.append(key).append(": ").append(value);
-            if (headerCounter.get() != headers.size()) {
-                responseBuilder.append("\n");
+
+            Integer headerCounter = 0;
+            for (Map.Entry<String, String> header : headers.entrySet()) {
+                headerCounter++;
+
+                responseBuilder.append(header.getKey()).append(": ").append(header.getValue());
+                if (headerCounter != headers.size()) {
+                    responseBuilder.append("\n");
+                }
             }
-        });
+        }
 
         if (body != null && !body.isEmpty()) {
             responseBuilder.append("\n\n");
