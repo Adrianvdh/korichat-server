@@ -11,7 +11,7 @@ import java.util.Map;
 @Data
 @Builder
 @AllArgsConstructor
-public class ChatRequest {
+public class ChatRequest implements ChatDTO {
     private String method;
     private String metaData;
     private Map<String, String> headers;
@@ -27,12 +27,22 @@ public class ChatRequest {
         this.metaData = metaData;
     }
 
-    public void putHeader(String headerName, String headeralue) {
+    @Override
+    public void addHeader(String headerName, String headerValue) {
         if (headers == null) {
             headers = new HashMap<>();
         }
 
-        headers.put(headerName, headeralue);
+        headers.put(headerName, headerValue);
+    }
+
+
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
     }
 
     protected void setSession(Session session) {

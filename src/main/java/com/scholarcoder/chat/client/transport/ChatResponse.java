@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Data
-public class ChatResponse {
+public class ChatResponse implements ChatDTO {
 
     private String statusCode;
     private Map<String, String> headers;
@@ -21,12 +21,21 @@ public class ChatResponse {
         this.statusCode = statusCode;
     }
 
+    @Override
     public void addHeader(String name, String value) {
         headers.put(name, value);
     }
 
     public void addCookie(String name, String value) {
         headers.put("Set-Cookie", name + "=" + value);
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
     }
 }
 

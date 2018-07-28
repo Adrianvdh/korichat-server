@@ -41,11 +41,18 @@
         </dependency>
 
 
+
         <!-- Testing dependencies -->
         <dependency>
             <groupId>com.scholarcoder.chat</groupId>
             <artifactId>chat-client</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>

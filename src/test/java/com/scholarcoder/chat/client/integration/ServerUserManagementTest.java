@@ -8,7 +8,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ServerUserManagementTest extends AbstractServerTest {
+public class ServerUserManagementTest {
 
     private static String HOST = "localhost";
     private static int PORT = 34567;
@@ -29,9 +29,7 @@ public class ServerUserManagementTest extends AbstractServerTest {
 
     @After
     public void tearDown() {
-
         client.disconnect();
-
         server.stop();
     }
 

@@ -1,5 +1,8 @@
 package com.scholarcoder.chat.client;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
@@ -10,6 +13,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class Server {
+    private Logger logger = LoggerFactory.getLogger(Server.class);
+
     private ServerSocket serverSocket;
     private Thread serverThread;
     private ExecutorService connectionHandlerExecutorService;
@@ -29,13 +34,13 @@ public class Server {
     }
 
     public void start() {
-        System.out.println("Starting client...");
+        logger.info("Starting server...");
         serverThread = new Thread(() -> {
             if (!tryBindServerSocket()) {
                 return;
             }
             if(!Thread.currentThread().isInterrupted()) {
-                System.out.println("Server is listening...");
+                logger.info("Server is listening on port {}", port);
             }
             notifyServerStarted();
             while (!Thread.currentThread().isInterrupted()) {
@@ -56,13 +61,15 @@ public class Server {
 
     private void tryHandleConnection() throws IOException {
         Socket socket = serverSocket.accept();
+        final InetAddress clientAdress = socket.getInetAddress();
+        final int clientPort = socket.getPort();
+        logger.info("Handling new connection from address -> {}", clientAdress.getCanonicalHostName(), clientPort);
 
-        System.out.println("Handling new connection");
-        Future submit = connectionHandlerExecutorService.submit(() -> {
+        Future clientHandle = connectionHandlerExecutorService.submit(() -> {
             ClientHandler client = new ClientHandler(socket, generatedId(), this);
             client.handle();
         });
-        clientHandlerConnections.add(submit);
+        clientHandlerConnections.add(clientHandle);
     }
 
     private boolean tryBindServerSocket() {
@@ -97,9 +104,10 @@ public class Server {
     }
 
     public void stop() {
-        System.out.println("Stopping client");
+        logger.info("Stopping server");
         serverThread.interrupt();
 
+        logger.info("Terminating all connections");
         clientHandlerConnections.forEach(future -> future.cancel(true));
         connectionHandlerExecutorService.shutdown();
 
@@ -111,6 +119,6 @@ public class Server {
             e.printStackTrace();
         }
 
-        System.out.println("Server shutdown");
+        logger.info("Server has shutdown...");
     }
 }

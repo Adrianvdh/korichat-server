@@ -28,7 +28,7 @@ public class ChatRequestTest {
 
         ChatRequest expectedChatRequest = new ChatRequest();
         expectedChatRequest.setRequestLine("ADD_USER", "chat");
-        expectedChatRequest.putHeader("Invite", "josie:user,john:user");
+        expectedChatRequest.addHeader("Invite", "josie:user,john:user");
 
         RequestService requestService = new RequestService();
         ChatRequest actualChatRequest = requestService.parseRequestMessage(requestMessage);
@@ -46,7 +46,7 @@ public class ChatRequestTest {
 
         ChatRequest expectedChatRequest = new ChatRequest();
         expectedChatRequest.setRequestLine("ADD_USER", "chat");
-        expectedChatRequest.putHeader("Invite", "josie:user,john:user");
+        expectedChatRequest.addHeader("Invite", "josie:user,john:user");
         expectedChatRequest.setBody("Hello world");
 
         RequestService requestService = new RequestService();
@@ -72,7 +72,7 @@ public class ChatRequestTest {
 
         ChatRequest expectedChatRequest = new ChatRequest();
         expectedChatRequest.setRequestLine("LISTUSER", "");
-        expectedChatRequest.putHeader("SESSIONID", sessionId);
+        expectedChatRequest.addHeader("SESSIONID", sessionId);
         expectedChatRequest.setSession(session);
 
         Assert.assertEquals(expectedChatRequest, actualChatRequest);

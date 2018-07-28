@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 public class RequestService {
 
     private SessionStore sessionStore;
@@ -91,7 +92,7 @@ public class RequestService {
         String[] headerLine = parseHeader(property);
         String headerName = headerLine[0].trim();
         String headerValue = headerLine[1].trim();
-        chatRequest.putHeader(headerName, headerValue);
+        chatRequest.addHeader(headerName, headerValue);
     }
 
     private String[] parseHeader(String headerLine) {
