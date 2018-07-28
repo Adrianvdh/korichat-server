@@ -1,10 +1,37 @@
 package com.scholarcoder.chat.client.transport;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ServiceUtil {
 
+    // Serialization utils
+    public static void appendStatusCode(StringBuilder responseBuilder, String s, String statusCode) {
+        responseBuilder.append(s).append(statusCode);
+    }
+
+    public static void appendHeaders(Map<String, String> headers, StringBuilder responseBuilder) {
+        Integer headerCounter = 0;
+        for (Map.Entry<String, String> header : headers.entrySet()) {
+            headerCounter++;
+
+            appendStatusCode(responseBuilder.append(header.getKey()), ": ", header.getValue());
+            if (headerCounter != headers.size()) {
+                responseBuilder.append("\n");
+            }
+        }
+    }
+
+    public static void appendBody(String body, StringBuilder responseBuilder) {
+        if (body != null && !body.isEmpty()) {
+            responseBuilder.append("\n\n");
+            responseBuilder.append(body);
+        }
+    }
+
+
+    // Deserialization utils
     public static void setHeadersAndBody(ChatDTO chatDTO, String[] responseLines) {
         boolean atBody = false;
         for (String property : responseLines) {

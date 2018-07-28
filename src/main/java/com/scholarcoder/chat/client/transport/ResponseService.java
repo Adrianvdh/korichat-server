@@ -2,7 +2,7 @@ package com.scholarcoder.chat.client.transport;
 
 import java.util.Map;
 
-import static com.scholarcoder.chat.client.transport.ServiceUtil.setHeadersAndBody;
+import static com.scholarcoder.chat.client.transport.ServiceUtil.*;
 
 public class ResponseService {
 
@@ -11,27 +11,14 @@ public class ResponseService {
         final String body = chatResponse.getBody();
 
         StringBuilder responseBuilder = new StringBuilder();
-        responseBuilder.append("CHAT/1.0 ").append(chatResponse.getStatusCode());
+        appendStatusCode(responseBuilder, "CHAT/1.0 ", chatResponse.getStatusCode());
 
         if (!headers.isEmpty()) {
             responseBuilder.append("\n");
-
         }
 
-        Integer headerCounter = 0;
-        for (Map.Entry<String, String> header : headers.entrySet()) {
-            headerCounter++;
-
-            responseBuilder.append(header.getKey()).append(": ").append(header.getValue());
-            if (headerCounter != headers.size()) {
-                responseBuilder.append("\n");
-            }
-        }
-
-        if (body != null && !body.isEmpty()) {
-            responseBuilder.append("\n\n");
-            responseBuilder.append(body);
-        }
+        appendHeaders(headers, responseBuilder);
+        appendBody(body, responseBuilder);
 
         return responseBuilder.toString();
     }
