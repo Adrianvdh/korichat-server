@@ -5,9 +5,8 @@ import com.scholarcoder.chat.client.store.session.SessionStore;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import static com.scholarcoder.chat.client.transport.ServiceUtil.setHeadersAndBody;
 
 public class RequestService {
 
@@ -25,10 +24,10 @@ public class RequestService {
 
         ChatRequest chatRequest = new ChatRequest();
         setRequestLine(requestLines[0], chatRequest);
-        setHeadersAndBody(requestLines, chatRequest);
+        setHeadersAndBody(chatRequest, requestLines);
 
         final Map<String, String> requestHeaders = chatRequest.getHeaders();
-        if(requestHeaders != null) {
+        if (requestHeaders != null) {
             injectSessionIfSessionHeaderExists(chatRequest, requestHeaders);
         }
 
@@ -36,30 +35,12 @@ public class RequestService {
     }
 
     private void injectSessionIfSessionHeaderExists(ChatRequest chatRequest, Map<String, String> requestHeaders) {
-        if(requestHeaders.containsKey("SESSIONID")) {
+        if (requestHeaders.containsKey("SESSIONID")) {
             String sessionId = requestHeaders.get("SESSIONID");
 
             Session session = sessionStore.findBySessionId(sessionId);
-            if(session != null) {
+            if (session != null) {
                 chatRequest.setSession(session);
-            }
-        }
-    }
-
-    private void setHeadersAndBody(String[] requestLines, ChatRequest chatRequest) {
-        boolean atBody = false;
-        for (String property : requestLines) {
-            if (property == requestLines[0]) {
-                continue;
-            }
-            if (beforeBodySection(property)) {
-                atBody = true;
-                continue;
-            }
-            if (atBody) {
-                chatRequest.setBody(property);
-            } else {
-                extractResponseHeader(chatRequest, property);
             }
         }
     }
@@ -82,34 +63,5 @@ public class RequestService {
 
         // TODO 14/07/18: Validate chat protocol version
         chatRequest.setRequestLine(method, metaData);
-    }
-
-    private boolean beforeBodySection(String property) {
-        return "".equals(property);
-    }
-
-    private void extractResponseHeader(ChatRequest chatRequest, String property) {
-        String[] headerLine = parseHeader(property);
-        String headerName = headerLine[0].trim();
-        String headerValue = headerLine[1].trim();
-        chatRequest.addHeader(headerName, headerValue);
-    }
-
-    private String[] parseHeader(String headerLine) {
-        String headerName = extractHeaderName(headerLine);
-        final String headerValueSelectorRegex = "(?<=\\w:).*";
-
-        Pattern pattern = Pattern.compile(headerValueSelectorRegex);
-        Matcher matcher = pattern.matcher(headerLine);
-
-        String headerValue = null;
-        while (matcher.find()) {
-            headerValue = matcher.group(0);
-        }
-        return new String[]{headerName, headerValue};
-    }
-
-    private String extractHeaderName(String headerLine) {
-        return headerLine.split(":")[0];
     }
 }
