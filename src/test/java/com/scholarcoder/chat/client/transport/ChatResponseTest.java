@@ -6,7 +6,7 @@ import org.junit.Test;
 public class ChatResponseTest {
 
     @Test
-    public void testGetResponseAsString() {
+    public void testSerializeResponseAsString_WithStatusCodeOnly() {
         String expectedResponse = "CHAT/1.0 200 OK";
 
         ChatResponse chatResponse = new ChatResponse();
@@ -20,7 +20,7 @@ public class ChatResponseTest {
     }
 
     @Test
-    public void testGetResponseAsString_WithHeadersOnly() {
+    public void testSerializeResponseAsString_WithHeadersOnly() {
         String expectedResponse = "CHAT/1.0 200 OK\n"
                 + "Header: some value\n"
                 + "Header2: new Value";
@@ -38,7 +38,7 @@ public class ChatResponseTest {
 
 
     @Test
-    public void testGetResponseAsString_WithBodyOnly() {
+    public void testSerializeResponseAsString_WithBodyOnly() {
         String expectedResponse = "CHAT/1.0 200 OK\n"
                 + "\n"
                 + "Some body payload";
@@ -54,7 +54,7 @@ public class ChatResponseTest {
     }
 
     @Test
-    public void testGetResponseAsString_WithHeadersAndBody() {
+    public void testSerializeResponseAsString_WithHeadersAndBody() {
         String expectedResponse = "CHAT/1.0 200 OK\n"
                 + "Header: some value\n"
                 + "Header2: new Value\n"
@@ -73,9 +73,8 @@ public class ChatResponseTest {
         Assert.assertEquals(expectedResponse, actualResponse);
     }
 
-
     @Test
-    public void testParseServerResponse() {
+    public void testDeserializeResponse_WithHeadersAndBody() {
         ChatResponse expectedResponse = new ChatResponse();
         expectedResponse.setStatusCode(Responses.OK);
         expectedResponse.addHeader("Header", "some value");

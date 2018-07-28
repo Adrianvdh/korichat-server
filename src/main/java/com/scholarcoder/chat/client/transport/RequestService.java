@@ -34,6 +34,36 @@ public class RequestService {
         return chatRequest;
     }
 
+    public String serializeAsString(ChatRequest chatRequest) {
+        final Map<String, String> headers = chatRequest.getHeaders();
+        final String body = chatRequest.getBody();
+
+        StringBuilder responseBuilder = new StringBuilder();
+        final boolean metaDataIsntEmpty = !chatRequest.getMetaData().isEmpty();
+        responseBuilder.append(chatRequest.getMethod()).append(" ").append(metaDataIsntEmpty ? chatRequest.getMetaData() + " " : "").append("CHAT/1.0");
+
+        if (!headers.isEmpty()) {
+            responseBuilder.append("\n");
+        }
+
+        Integer headerCounter = 0;
+        for (Map.Entry<String, String> header : headers.entrySet()) {
+            headerCounter++;
+
+            responseBuilder.append(header.getKey()).append(": ").append(header.getValue());
+            if (headerCounter != headers.size()) {
+                responseBuilder.append("\n");
+            }
+        }
+
+        if (body != null && !body.isEmpty()) {
+            responseBuilder.append("\n\n");
+            responseBuilder.append(body);
+        }
+
+        return responseBuilder.toString();
+    }
+
     private void injectSessionIfSessionHeaderExists(ChatRequest chatRequest, Map<String, String> requestHeaders) {
         if (requestHeaders.containsKey("SESSIONID")) {
             String sessionId = requestHeaders.get("SESSIONID");

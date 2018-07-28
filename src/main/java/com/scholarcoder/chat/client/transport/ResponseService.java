@@ -16,14 +16,15 @@ public class ResponseService {
         if (!headers.isEmpty()) {
             responseBuilder.append("\n");
 
-            Integer headerCounter = 0;
-            for (Map.Entry<String, String> header : headers.entrySet()) {
-                headerCounter++;
+        }
 
-                responseBuilder.append(header.getKey()).append(": ").append(header.getValue());
-                if (headerCounter != headers.size()) {
-                    responseBuilder.append("\n");
-                }
+        Integer headerCounter = 0;
+        for (Map.Entry<String, String> header : headers.entrySet()) {
+            headerCounter++;
+
+            responseBuilder.append(header.getKey()).append(": ").append(header.getValue());
+            if (headerCounter != headers.size()) {
+                responseBuilder.append("\n");
             }
         }
 

@@ -80,5 +80,41 @@ public class ChatRequestTest {
     }
 
 
+    @Test
+    public void testSerializeRequestAsString_WithHeadersAndBody() {
+        ChatRequest chatRequest= new ChatRequest();
+        chatRequest.setRequestLine("ADD_USER", "chat");
+        chatRequest.addHeader("Invite", "josie:user,john:user");
+        chatRequest.setBody("Hello world");
+
+        String expectedRequest = "ADD_USER chat CHAT/1.0\n" +
+                "Invite: josie:user,john:user\n" +
+                "\n" +
+                "Hello world";
+
+        RequestService requestService = new RequestService();
+        String actualRequest = requestService.serializeAsString(chatRequest);
+
+        Assert.assertEquals(expectedRequest, actualRequest);
+    }
+
+    @Test
+    public void testSerializeRequestAsString_WithMetaDataNotPresent() {
+        ChatRequest chatRequest= new ChatRequest();
+        chatRequest.setRequestLine("ADD_USER", "");
+        chatRequest.addHeader("Invite", "josie:user,john:user");
+        chatRequest.setBody("Hello world");
+
+        String expectedRequest = "ADD_USER CHAT/1.0\n" +
+                "Invite: josie:user,john:user\n" +
+                "\n" +
+                "Hello world";
+
+        RequestService requestService = new RequestService();
+        String actualRequest = requestService.serializeAsString(chatRequest);
+
+        Assert.assertEquals(expectedRequest, actualRequest);
+    }
+
 
 }
