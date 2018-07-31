@@ -13,7 +13,7 @@ public class MessageProcessor {
     private List<CommandHandler> commandHandlers;
 
     public MessageProcessor() {
-        this.commandHandlers = CommandHandlersRegistry.getRegisteredCommandHandlers();
+        this.commandHandlers = CommandHandlersRegistry.getInstance().getRegisteredCommandHandlers();
     }
 
     public String process(String message) {

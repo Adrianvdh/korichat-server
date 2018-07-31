@@ -2,6 +2,7 @@ package com.scholarcoder.chat.server.api.user;
 
 import com.scholarcoder.chat.client.Client;
 import com.scholarcoder.chat.server.Server;
+import com.scholarcoder.chat.server.api.user.repository.UserRepositorySingleton;
 import org.junit.*;
 
 public class ServerUserManagementTest {

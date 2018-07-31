@@ -2,8 +2,9 @@ package com.scholarcoder.chat.server.api;
 
 import com.scholarcoder.chat.server.api.user.ListUserCommand;
 import com.scholarcoder.chat.server.api.user.RegisterUserCommand;
-import com.scholarcoder.chat.server.api.user.UserRepositorySingleton;
+import com.scholarcoder.chat.server.api.user.UseUserCommand;
 import com.scholarcoder.chat.server.api.user.repository.UserRepository;
+import com.scholarcoder.chat.server.api.user.repository.UserRepositorySingleton;
 import com.scholarcoder.chat.server.store.session.SessionStore;
 import com.scholarcoder.chat.server.store.session.SessionStoreSingelton;
 
@@ -11,23 +12,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommandHandlersRegistry {
+    private static CommandHandlersRegistry instance = new CommandHandlersRegistry();
 
     private List<CommandHandler> commandHandlers;
-    private static CommandHandlersRegistry instance;
+
     private CommandHandlersRegistry() {
     }
 
-    public static List<CommandHandler> getRegisteredCommandHandlers() {
-        if (instance == null) {
-            instance = new CommandHandlersRegistry();
-        }
-        if(instance.commandHandlers == null) {
-            instance.commandHandlers = registerCommandHandlers();
-        }
-        return instance.commandHandlers;
+    public static CommandHandlersRegistry getInstance() {
+        return instance;
     }
 
-    private static List<CommandHandler> registerCommandHandlers() {
+    private List<CommandHandler> registerCommandHandlers() {
         final UserRepository userRepository = getUserRepository();
         final SessionStore sessionStore = getSessionStore();
 
@@ -39,11 +35,20 @@ public class CommandHandlersRegistry {
         return commandHandlers;
     }
 
-    private static SessionStore getSessionStore() {
+    private SessionStore getSessionStore() {
         return SessionStoreSingelton.get();
     }
 
-    private static UserRepository getUserRepository() {
+    private UserRepository getUserRepository() {
         return UserRepositorySingleton.get();
     }
+
+
+    public List<CommandHandler> getRegisteredCommandHandlers() {
+        if(commandHandlers == null) {
+           commandHandlers = registerCommandHandlers();
+        }
+        return commandHandlers;
+    }
+
 }

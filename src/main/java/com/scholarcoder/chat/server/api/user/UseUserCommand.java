@@ -1,5 +1,6 @@
-package com.scholarcoder.chat.server.api;
+package com.scholarcoder.chat.server.api.user;
 
+import com.scholarcoder.chat.server.api.CommandHandler;
 import com.scholarcoder.chat.server.store.session.Session;
 import com.scholarcoder.chat.server.store.session.SessionStore;
 import com.scholarcoder.chat.server.transport.ChatRequest;
