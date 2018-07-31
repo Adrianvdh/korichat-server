@@ -1,7 +1,6 @@
 package com.scholarcoder.chat.server.processor;
 
 import com.scholarcoder.chat.server.api.CommandHandler;
-import com.scholarcoder.chat.server.api.CommandHandlersRegistry;
 import com.scholarcoder.chat.server.transport.ChatRequest;
 import com.scholarcoder.chat.server.transport.ChatResponse;
 import com.scholarcoder.chat.server.transport.RequestService;

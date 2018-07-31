@@ -10,20 +10,11 @@ import com.scholarcoder.chat.server.store.session.SessionStoreSingelton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
-public class CommandHandlersRegistry {
-    private static CommandHandlersRegistry instance = new CommandHandlersRegistry();
+public class CommandHandlerRegistrar {
 
-    private List<CommandHandler> commandHandlers;
-
-    private CommandHandlersRegistry() {
-    }
-
-    public static CommandHandlersRegistry getInstance() {
-        return instance;
-    }
-
-    private List<CommandHandler> registerCommandHandlers() {
+    public Supplier<List<CommandHandler>> commandHandlers = () -> {
         final UserRepository userRepository = getUserRepository();
         final SessionStore sessionStore = getSessionStore();
 
@@ -33,7 +24,8 @@ public class CommandHandlersRegistry {
         commandHandlers.add(new ListUserCommand(userRepository));
 
         return commandHandlers;
-    }
+    };
+
 
     private SessionStore getSessionStore() {
         return SessionStoreSingelton.get();
@@ -43,12 +35,5 @@ public class CommandHandlersRegistry {
         return UserRepositorySingleton.get();
     }
 
-
-    public List<CommandHandler> getRegisteredCommandHandlers() {
-        if(commandHandlers == null) {
-           commandHandlers = registerCommandHandlers();
-        }
-        return commandHandlers;
-    }
 
 }
