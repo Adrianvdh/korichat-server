@@ -5,8 +5,8 @@ import com.scholarcoder.chat.server.store.session.Session;
 import com.scholarcoder.chat.server.transport.ChatRequest;
 import com.scholarcoder.chat.server.transport.ChatResponse;
 import com.scholarcoder.chat.server.transport.Responses;
-import com.scholarcoder.chat.server.api.user.User;
-import com.scholarcoder.chat.server.api.user.UserRepository;
+import com.scholarcoder.chat.server.api.user.repository.User;
+import com.scholarcoder.chat.server.api.user.repository.UserRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;

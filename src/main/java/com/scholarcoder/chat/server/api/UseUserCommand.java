@@ -5,8 +5,8 @@ import com.scholarcoder.chat.server.store.session.SessionStore;
 import com.scholarcoder.chat.server.transport.ChatRequest;
 import com.scholarcoder.chat.server.transport.ChatResponse;
 import com.scholarcoder.chat.server.transport.Responses;
-import com.scholarcoder.chat.server.api.user.User;
-import com.scholarcoder.chat.server.api.user.UserRepository;
+import com.scholarcoder.chat.server.api.user.repository.User;
+import com.scholarcoder.chat.server.api.user.repository.UserRepository;
 
 public class UseUserCommand implements CommandHandler {
 

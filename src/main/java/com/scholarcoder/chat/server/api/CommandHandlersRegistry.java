@@ -2,10 +2,10 @@ package com.scholarcoder.chat.server.api;
 
 import com.scholarcoder.chat.server.api.user.ListUserCommand;
 import com.scholarcoder.chat.server.api.user.RegisterUserCommand;
+import com.scholarcoder.chat.server.api.user.UserRepositorySingleton;
+import com.scholarcoder.chat.server.api.user.repository.UserRepository;
 import com.scholarcoder.chat.server.store.session.SessionStore;
 import com.scholarcoder.chat.server.store.session.SessionStoreSingelton;
-import com.scholarcoder.chat.server.api.user.UserRepository;
-import com.scholarcoder.chat.server.api.user.UserRepositorySingleton;
 
 import java.util.ArrayList;
 import java.util.List;

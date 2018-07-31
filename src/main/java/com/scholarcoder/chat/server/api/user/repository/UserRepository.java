@@ -1,4 +1,6 @@
-package com.scholarcoder.chat.server.api.user;
+package com.scholarcoder.chat.server.api.user.repository;
+
+import com.scholarcoder.chat.server.api.user.UserAlreadyExistsException;
 
 import java.util.List;
 

@@ -1,5 +1,8 @@
 package com.scholarcoder.chat.server.api.user;
 
+import com.scholarcoder.chat.server.api.user.repository.InMemoryUserRepository;
+import com.scholarcoder.chat.server.api.user.repository.UserRepository;
+
 public class UserRepositorySingleton {
     private static UserRepositorySingleton holder;
     private UserRepository userRepository;
