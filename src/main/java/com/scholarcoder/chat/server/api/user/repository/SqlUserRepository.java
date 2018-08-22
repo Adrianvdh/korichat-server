@@ -14,14 +14,14 @@ public class SqlUserRepository {
     }
 
     public User save(User user) {
-        final String insertStatement = "insert into chatapp.User(Username) values ('" + user.getUsername() + "')";
+        final String insertStatement = "insert into PUBLIC.User(USERNAME) values ('" + user.getUsername() + "')";
 
         try (Statement statement = connection.createStatement()) {
 
             statement.executeUpdate(insertStatement);
-            ResultSet resultSet = statement.executeQuery("SELECT LAST_INSERT_ID()");
+            ResultSet resultSet = statement.executeQuery("select USERID from PUBLIC.USER where USERNAME = '" + user.getUsername() + "'");
 
-            if (resultSet.first()) {
+            if (resultSet.next()) {
                 int userId = resultSet.getInt(1);
 
                 return new User(userId, user.getUsername());
@@ -29,7 +29,7 @@ public class SqlUserRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return user;
+        return null;
     }
 
 }

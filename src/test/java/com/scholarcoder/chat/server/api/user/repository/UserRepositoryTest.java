@@ -1,24 +1,33 @@
 package com.scholarcoder.chat.server.api.user.repository;
 
-import com.scholarcoder.chat.server.repository.ConnectionUtil;
+import com.scholarcoder.chat.server.repository.EmbeddedDatabaseBuilder;
+import com.scholarcoder.chat.server.repository.HsqldbConnection;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class UserRepositoryTest {
 
-    private Connection mySqlConnection;
+    Connection connection;
 
     @Before
-    public void setUp() {
-        mySqlConnection = ConnectionUtil.getInstance().getMySqlConnection();
+    public void setUp() throws SQLException {
+        EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
+        builder.configureConnection(HsqldbConnection.getInstance().getInprocessConnection());
+        builder.addUpdateScript("hsqldb/create-schema.sql");
+        this.connection = builder.build();
+
+        Statement statement = connection.createStatement();
+        statement.executeUpdate("delete from PUBLIC.USER");
     }
 
     @Test
-    public void testSaveUser() {
-        SqlUserRepository userRepository = new SqlUserRepository(mySqlConnection);
+    public void testCreateUser() {
+        SqlUserRepository userRepository = new SqlUserRepository(connection);
         User user = new User("adrian");
 
         User savedUser = userRepository.save(user);
@@ -28,5 +37,4 @@ public class UserRepositoryTest {
 
         Assert.assertEquals(expectedUser, savedUser);
     }
-
 }
