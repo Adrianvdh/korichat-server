@@ -37,4 +37,15 @@ public class UserRepositoryTest {
 
         Assert.assertEquals(expectedUser, savedUser);
     }
+
+    @Test
+    public void testFindOne() {
+        SqlUserRepository userRepository = new SqlUserRepository(connection);
+        User savedUser = userRepository.save(new User("adrian"));
+
+        User foundUser = userRepository.findOne(savedUser.getUserId());
+
+        Assert.assertEquals(savedUser, foundUser);
+
+    }
 }

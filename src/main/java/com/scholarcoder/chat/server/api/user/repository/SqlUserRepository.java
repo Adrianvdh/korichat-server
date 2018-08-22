@@ -32,4 +32,18 @@ public class SqlUserRepository {
         return null;
     }
 
+    public User findOne(Integer id) {
+        try (Statement statement = connection.createStatement()) {
+            ResultSet resultSet = statement.executeQuery("select * from PUBLIC.USER where USERID = '" + id + "'");
+
+            if (resultSet.next()) {
+                int userId = resultSet.getInt(1);
+                String username = resultSet.getString(2);
+                return new User(userId, username);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
