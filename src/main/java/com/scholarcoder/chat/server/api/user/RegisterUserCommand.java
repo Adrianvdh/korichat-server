@@ -23,7 +23,7 @@ public class  RegisterUserCommand implements CommandHandler {
     }
 
     @Override
-    public void doPerform(ChatRequest request, ChatResponse response) {
+    public void handle(ChatRequest request, ChatResponse response) {
         String username = request.getMetaData();
         if(userRepository.exists(username)) {
             response.setStatusCode(Responses.CONFLICT);

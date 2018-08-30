@@ -26,7 +26,7 @@ public class UseUserCommand implements CommandHandler {
     }
 
     @Override
-    public void doPerform(ChatRequest request, ChatResponse response) {
+    public void handle(ChatRequest request, ChatResponse response) {
         String username = request.getMetaData();
 
         User user = userRepository.findByUsername(username);

@@ -24,7 +24,7 @@ public class MessageProcessor {
         boolean foundApplicableHandler = false;
           for (CommandHandler commandHandler : commandHandlers) {
             if (commandHandler.applicable(chatRequest.getMethod())) {
-                commandHandler.doPerform(chatRequest, chatResponse);
+                commandHandler.handle(chatRequest, chatResponse);
                 foundApplicableHandler = true;
                 break;
             }

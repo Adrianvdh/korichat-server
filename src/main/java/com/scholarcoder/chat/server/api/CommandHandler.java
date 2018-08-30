@@ -6,5 +6,5 @@ import com.scholarcoder.chat.server.protocol.ChatResponse;
 public interface CommandHandler {
     boolean applicable(String action);
 
-    void doPerform(ChatRequest request, ChatResponse response);
+    void handle(ChatRequest request, ChatResponse response);
 }

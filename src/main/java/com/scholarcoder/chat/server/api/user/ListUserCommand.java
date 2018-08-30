@@ -25,7 +25,7 @@ public class ListUserCommand implements CommandHandler {
     }
 
     @Override
-    public void doPerform(ChatRequest request, ChatResponse response) {
+    public void handle(ChatRequest request, ChatResponse response) {
         Session session = request.getSession();
         if(session == null) {
             response.setStatusCode("401 Unauthorized");

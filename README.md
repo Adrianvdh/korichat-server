@@ -3,9 +3,9 @@ KoriChat is a client-server chat application. Basic features are supported such 
 group management, sending direct messages between users and broadcasting messages in user groups.
 
 Stuff I need to do:
-- [ ] User registration with persistent storage
-- [ ] User login with session tracking
-- [ ] List registered users
+- [x] User registration with persistent storage
+- [x] User login with session tracking
+- [x] List registered users
 - [ ] Send direct messages to users
 - [ ] Creating groups of users
 - [ ] Broadcasting messages to groups

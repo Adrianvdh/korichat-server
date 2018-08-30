@@ -131,6 +131,5 @@ public class ChatRequestTest {
         String actualCookieValue = chatRequest.getCookie("key");
 
         Assert.assertEquals("value", actualCookieValue);
-
     }
 }

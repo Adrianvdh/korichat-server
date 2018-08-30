@@ -142,6 +142,4 @@ public class ServerUserManagementTest {
                     .map(entry -> entry.getValue().split("="))
                     .collect(Collectors.toMap(key -> key[0], value -> value[1]));
     }
-
-
 }
