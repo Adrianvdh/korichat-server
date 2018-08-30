@@ -1,4 +1,4 @@
-package com.scholarcoder.chat.server.transport;
+package com.scholarcoder.chat.server.protocol;
 
 import lombok.Data;
 

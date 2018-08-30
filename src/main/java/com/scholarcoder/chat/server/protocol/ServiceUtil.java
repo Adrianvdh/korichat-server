@@ -1,4 +1,4 @@
-package com.scholarcoder.chat.server.transport;
+package com.scholarcoder.chat.server.protocol;
 
 import java.util.Map;
 import java.util.regex.Matcher;

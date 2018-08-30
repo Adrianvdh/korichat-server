@@ -2,9 +2,9 @@ package com.scholarcoder.chat.server.api.user;
 
 import com.scholarcoder.chat.server.api.CommandHandler;
 import com.scholarcoder.chat.server.store.session.Session;
-import com.scholarcoder.chat.server.transport.ChatRequest;
-import com.scholarcoder.chat.server.transport.ChatResponse;
-import com.scholarcoder.chat.server.transport.Responses;
+import com.scholarcoder.chat.server.protocol.ChatRequest;
+import com.scholarcoder.chat.server.protocol.ChatResponse;
+import com.scholarcoder.chat.server.protocol.Responses;
 import com.scholarcoder.chat.server.api.user.repository.User;
 import com.scholarcoder.chat.server.api.user.repository.UserRepository;
 

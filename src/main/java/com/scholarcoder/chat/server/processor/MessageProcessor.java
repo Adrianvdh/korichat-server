@@ -2,10 +2,10 @@ package com.scholarcoder.chat.server.processor;
 
 import com.scholarcoder.chat.server.api.CommandHandler;
 import com.scholarcoder.chat.server.store.session.SessionStoreSingelton;
-import com.scholarcoder.chat.server.transport.ChatRequest;
-import com.scholarcoder.chat.server.transport.ChatResponse;
-import com.scholarcoder.chat.server.transport.RequestService;
-import com.scholarcoder.chat.server.transport.ResponseService;
+import com.scholarcoder.chat.server.protocol.ChatRequest;
+import com.scholarcoder.chat.server.protocol.ChatResponse;
+import com.scholarcoder.chat.server.protocol.RequestService;
+import com.scholarcoder.chat.server.protocol.ResponseService;
 
 import java.util.List;
 

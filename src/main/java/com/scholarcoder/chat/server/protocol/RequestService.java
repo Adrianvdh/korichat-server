@@ -1,4 +1,4 @@
-package com.scholarcoder.chat.server.transport;
+package com.scholarcoder.chat.server.protocol;
 
 import com.scholarcoder.chat.server.store.session.Session;
 import com.scholarcoder.chat.server.store.session.SessionStore;
@@ -6,13 +6,14 @@ import com.scholarcoder.chat.server.store.session.SessionStore;
 import java.util.Arrays;
 import java.util.Map;
 
-import static com.scholarcoder.chat.server.transport.ServiceUtil.*;
+import static com.scholarcoder.chat.server.protocol.ServiceUtil.*;
 
 public class RequestService {
 
     private SessionStore sessionStore;
 
     public RequestService() {
+        sessionStore = new SessionStore();
     }
 
     public RequestService(SessionStore sessionStore) {

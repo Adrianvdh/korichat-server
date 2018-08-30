@@ -19,7 +19,7 @@ public class CommandHandlersRegistry {
 
     public List<CommandHandler> getRegisteredCommandHandlers() {
         if(commandHandlers == null) {
-           commandHandlers = new CommandHandlerRegistrar().commandHandlers.get();
+           commandHandlers = new CommandHandlerRegistrar().getCommandHandlers();
         }
         return commandHandlers;
     }

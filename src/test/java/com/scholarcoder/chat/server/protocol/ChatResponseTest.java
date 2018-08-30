@@ -1,8 +1,5 @@
-package com.scholarcoder.chat.server.transport;
+package com.scholarcoder.chat.server.protocol;
 
-import com.scholarcoder.chat.server.transport.ChatResponse;
-import com.scholarcoder.chat.server.transport.ResponseService;
-import com.scholarcoder.chat.server.transport.Responses;
 import org.junit.Assert;
 import org.junit.Test;
 

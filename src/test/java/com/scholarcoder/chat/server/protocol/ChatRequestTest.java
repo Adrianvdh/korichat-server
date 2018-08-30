@@ -1,10 +1,8 @@
-package com.scholarcoder.chat.server.transport;
+package com.scholarcoder.chat.server.protocol;
 
 import com.scholarcoder.chat.server.store.session.Session;
 import com.scholarcoder.chat.server.store.session.SessionStore;
 import com.scholarcoder.chat.server.store.session.SessionStoreSingelton;
-import com.scholarcoder.chat.server.transport.ChatRequest;
-import com.scholarcoder.chat.server.transport.RequestService;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -77,7 +75,7 @@ public class ChatRequestTest {
 
         ChatRequest expectedChatRequest = new ChatRequest();
         expectedChatRequest.setRequestLine("LIST_USER", "");
-        expectedChatRequest.addHeader("SESSIONID", sessionId);
+        expectedChatRequest.addHeader("Cookie", "SESSIONID=" + sessionId);
         expectedChatRequest.setSession(session);
 
         Assert.assertEquals(expectedChatRequest, actualChatRequest);
@@ -123,17 +121,16 @@ public class ChatRequestTest {
 
     @Test
     public void testGetCookiesFromRequest() {
-        String sessionId = UUID.randomUUID().toString();
         String chatRequestString = "ADD_USER CHAT/1.0\n" +
-                "Cookie: SESSIONID=" + sessionId + "\n" +
+                "Cookie: key=value\n" +
                 "\n" +
                 "Hello world";
 
         RequestService requestService = new RequestService();
         ChatRequest chatRequest = requestService.deserializeRequestMessage(chatRequestString);
-        String actualSessionId = chatRequest.getCookie("SESSIONID");
+        String actualCookieValue = chatRequest.getCookie("key");
 
-        Assert.assertEquals(sessionId, actualSessionId);
+        Assert.assertEquals("value", actualCookieValue);
 
     }
 }

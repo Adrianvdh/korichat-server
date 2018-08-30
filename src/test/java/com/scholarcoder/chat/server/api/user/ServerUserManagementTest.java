@@ -6,8 +6,8 @@ import com.scholarcoder.chat.server.api.user.repository.UserRepository;
 import com.scholarcoder.chat.server.api.user.repository.UserRepositorySingleton;
 import com.scholarcoder.chat.server.repository.EmbeddedDatabaseBuilder;
 import com.scholarcoder.chat.server.repository.HsqldbConnection;
-import com.scholarcoder.chat.server.transport.ChatResponse;
-import com.scholarcoder.chat.server.transport.ResponseService;
+import com.scholarcoder.chat.server.protocol.ChatResponse;
+import com.scholarcoder.chat.server.protocol.ResponseService;
 import org.junit.*;
 
 import java.util.Map;

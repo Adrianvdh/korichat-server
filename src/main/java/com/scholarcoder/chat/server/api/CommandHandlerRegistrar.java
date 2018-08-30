@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 
 public class CommandHandlerRegistrar {
 
-    public Supplier<List<CommandHandler>> commandHandlers = () -> {
+    public List<CommandHandler> getCommandHandlers() {
         final UserRepository userRepository = getUserRepository();
         final SessionStore sessionStore = getSessionStore();
 
@@ -24,8 +24,7 @@ public class CommandHandlerRegistrar {
         commandHandlers.add(new ListUserCommand(userRepository));
 
         return commandHandlers;
-    };
-
+    }
 
     private SessionStore getSessionStore() {
         return SessionStoreSingelton.get();
