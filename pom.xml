@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.korichat</groupId>
-    <artifactId>chat-server</artifactId>
+    <artifactId>korichat-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <build>
         <plugins>
