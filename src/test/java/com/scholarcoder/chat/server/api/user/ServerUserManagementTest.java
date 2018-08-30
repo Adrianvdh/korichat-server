@@ -2,8 +2,16 @@ package com.scholarcoder.chat.server.api.user;
 
 import com.scholarcoder.chat.client.Client;
 import com.scholarcoder.chat.server.Server;
+import com.scholarcoder.chat.server.api.user.repository.UserRepository;
 import com.scholarcoder.chat.server.api.user.repository.UserRepositorySingleton;
+import com.scholarcoder.chat.server.repository.EmbeddedDatabaseBuilder;
+import com.scholarcoder.chat.server.repository.HsqldbConnection;
+import com.scholarcoder.chat.server.transport.ChatResponse;
+import com.scholarcoder.chat.server.transport.ResponseService;
 import org.junit.*;
+
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ServerUserManagementTest {
 
@@ -21,20 +29,26 @@ public class ServerUserManagementTest {
         client = new Client(HOST, PORT);
         client.connect();
 
-        UserRepositorySingleton.get().deleteAll();
+        EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
+        builder.configureConnection(HsqldbConnection.getInstance().getInprocessConnection());
+        builder.addUpdateScript("hsqldb/create-schema.sql");
+        builder.build();
     }
 
     @After
     public void tearDown() {
         client.disconnect();
         server.stop();
+
+        UserRepository userRepository = UserRepositorySingleton.getInstance().get();
+        userRepository.deleteAll();
     }
 
     @Test
     public void testNotAllowedMethod() {
         String expectedResponse = "CHAT/1.0 405 Command Not Allowed";
 
-        String command = "NOTEXISTANT sometmeta CHAT/1.0";
+        String command = "NOTEXISTANT somemeta CHAT/1.0";
         String response = client.sendCommand(command);
 
         Assert.assertEquals(expectedResponse, response);
@@ -91,32 +105,43 @@ public class ServerUserManagementTest {
 
         String expectedResponse = "CHAT/1.0 401 Unauthorized";
 
-        String response = client.sendCommand("LISTUSER CHAT/1.0");
+        String response = client.sendCommand("LIST_USER CHAT/1.0");
 
         Assert.assertEquals(expectedResponse, response);
 
     }
 
 
-    @Ignore
     @Test
     public void testListRegisteredUsers_requiresAuthentication_succeeds() {
         client.sendCommand("REG adrian CHAT/1.0");
+        client.sendCommand("REG josie CHAT/1.0");
 
-        String responseWithSessionId = client.sendCommand("USE adrian CHAT/1.0");
-        System.out.println(responseWithSessionId);
+        ResponseService responseService = new ResponseService();
+        String useUserResponse = client.sendCommand("USE adrian CHAT/1.0");
+        ChatResponse chatResponse = responseService.deserializeResponseMessage(useUserResponse);
 
+        Map<String, String> headerCookies = extractResponseSetCookieHeaders(chatResponse);
+
+        String sessionId = headerCookies.get("SESSIONID");
+
+        String requestMessage = "LIST_USER CHAT/1.0\n" +
+                "Cookie: SESSIONID=" + sessionId;
+        String listUserResponse = client.sendCommand(requestMessage);
 
         String expectedResponse = "CHAT/1.0 200 OK\n"
                 + "\n"
                 + "adrian,josie";
-
-        String response = client.sendCommand("LISTUSER CHAT/1.0");
-
-        Assert.assertEquals(expectedResponse, response);
+        Assert.assertEquals(expectedResponse, listUserResponse);
 
     }
 
+    private Map<String, String> extractResponseSetCookieHeaders(ChatResponse chatResponse) {
+        return chatResponse.getHeaders().entrySet().stream()
+                    .filter(entry -> entry.getKey().equals("Set-Cookie"))
+                    .map(entry -> entry.getValue().split("="))
+                    .collect(Collectors.toMap(key -> key[0], value -> value[1]));
+    }
 
 
 }

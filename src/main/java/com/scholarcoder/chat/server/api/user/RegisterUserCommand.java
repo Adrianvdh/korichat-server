@@ -1,12 +1,13 @@
 package com.scholarcoder.chat.server.api.user;
 
 import com.scholarcoder.chat.server.api.CommandHandler;
+import com.scholarcoder.chat.server.api.user.repository.User;
 import com.scholarcoder.chat.server.api.user.repository.UserRepository;
 import com.scholarcoder.chat.server.transport.ChatRequest;
 import com.scholarcoder.chat.server.transport.ChatResponse;
 import com.scholarcoder.chat.server.transport.Responses;
 
-public class RegisterUserCommand implements CommandHandler {
+public class  RegisterUserCommand implements CommandHandler {
 
     private final String command = "REG";
 
@@ -24,12 +25,12 @@ public class RegisterUserCommand implements CommandHandler {
     @Override
     public void doPerform(ChatRequest request, ChatResponse response) {
         String username = request.getMetaData();
-        try {
-            userRepository.add(username);
-            response.setStatusCode(Responses.CREATED);
-
-        } catch (UserAlreadyExistsException e) {
+        if(userRepository.exists(username)) {
             response.setStatusCode(Responses.CONFLICT);
+            return;
         }
+
+        userRepository.save(new User(username));
+        response.setStatusCode(Responses.CREATED);
     }
 }

@@ -13,7 +13,7 @@ Stuff I need to do:
 
 
 ## User management
-User manegment allows new users to register and account, login as a user and the ability to list registered users.
+User management allows new users to register and account, login as a user and the ability to list registered users.
 
 ### Registering a user
 Register a new user, in this example we register the user adrian as a new user.
@@ -55,7 +55,7 @@ if logging in was successful, a session id will be returned.
 Subsist requests to the server will require passing the session id to allow the server to identify the user.
 ```
 CHAT/1.0 200 OK
-Set-Cookie: SESSIONID: SOME SESSION ID
+Set-Cookie: SESSIONID=042cf5ba-7f52-4805-a2a0-3c6006fe3eee
 ```
 Every connection to the server as a sessionId. SessionId's are bound to the TCP/IP connection of the client.
 For anonymous users, the session is not recoverable when the connection drops and a new session will be created.

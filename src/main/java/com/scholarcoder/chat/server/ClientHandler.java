@@ -37,35 +37,42 @@ public class ClientHandler {
     }
 
     public void handle() {
-        try {
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-
-                if (Thread.currentThread().isInterrupted()) {
-                    this.out.close();
-                    this.in.close();
-                    socket.close();
-                    break;
+        while(!Thread.currentThread().isInterrupted()) {
+            StringBuilder requestBuilder = new StringBuilder();
+            try {
+                String inputLine;
+                while ((inputLine = in.readLine()) != null) {
+                    requestBuilder.append(inputLine);
+                    if (!in.ready()) {
+                        break;
+                    }
+                    requestBuilder.append(System.lineSeparator());
                 }
-                String response;
-                try {
-                    response = messageProcessor.process(inputLine);
-                }
-                catch (Throwable t) {
-                    StringBuilder exceptionStringBuilder = new StringBuilder();
-                    exceptionStringBuilder.append("500 Internal Server Error!").append(System.lineSeparator());
-
-                    String stackTrace = convertStackTraceToString(t);
-                    exceptionStringBuilder.append(stackTrace);
-
-                    response = exceptionStringBuilder.toString();
-                }
-                out.println(response);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+
+            String response;
+            try {
+                response = messageProcessor.process(requestBuilder.toString());
+            } catch (Throwable t) {
+                StringBuilder exceptionStringBuilder = new StringBuilder();
+                exceptionStringBuilder.append("500 Internal Server Error!").append(System.lineSeparator());
+
+                String stackTrace = convertStackTraceToString(t);
+                exceptionStringBuilder.append(stackTrace);
+
+                response = exceptionStringBuilder.toString();
+            }
+            out.println(response);
+        }
+        try {
+            this.out.close();
+            this.in.close();
+            socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     private String convertStackTraceToString(Throwable t) {

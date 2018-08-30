@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -47,5 +48,20 @@ public class ChatRequest implements ChatDTO {
 
     protected void setSession(Session session) {
         this.session = session;
+    }
+
+    public String getCookie(String name) {
+        Map<String, String> headerCookies = headers.entrySet().stream()
+                .filter(entry -> entry.getKey().equals("Cookie"))
+                .map(entry -> entry.getValue().split("="))
+                .collect(Collectors.toMap(key -> key[0], value -> value[1]));
+
+        return headerCookies.entrySet().stream()
+                .filter(entry -> entry.getKey().equals(name))
+                .findFirst()
+                .map(Map.Entry::getValue)
+                .orElse(null);
+
+
     }
 }

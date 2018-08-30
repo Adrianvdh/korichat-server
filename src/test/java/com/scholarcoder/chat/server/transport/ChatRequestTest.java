@@ -8,6 +8,8 @@ import com.scholarcoder.chat.server.transport.RequestService;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.UUID;
+
 public class ChatRequestTest {
 
     @Test
@@ -58,22 +60,23 @@ public class ChatRequestTest {
 
     }
 
+
     @Test
-    public void testGetSessionFromRequest() {
+    public void testGetSessionIdCookieFromRequest() {
         Session session = new Session();
         String sessionId = session.getSessionId();
 
         SessionStore sessionStore = SessionStoreSingelton.get();
         sessionStore.putSession(session);
 
-        String requestMessage = "LISTUSER CHAT/1.0\n" +
-                "SESSIONID: " + sessionId;
+        String requestMessage = "LIST_USER CHAT/1.0\n" +
+                "Cookie: SESSIONID=" + sessionId;
 
         RequestService requestService = new RequestService(sessionStore);
         ChatRequest actualChatRequest = requestService.deserializeRequestMessage(requestMessage);
 
         ChatRequest expectedChatRequest = new ChatRequest();
-        expectedChatRequest.setRequestLine("LISTUSER", "");
+        expectedChatRequest.setRequestLine("LIST_USER", "");
         expectedChatRequest.addHeader("SESSIONID", sessionId);
         expectedChatRequest.setSession(session);
 
@@ -118,5 +121,19 @@ public class ChatRequestTest {
         Assert.assertEquals(expectedRequest, actualRequest);
     }
 
+    @Test
+    public void testGetCookiesFromRequest() {
+        String sessionId = UUID.randomUUID().toString();
+        String chatRequestString = "ADD_USER CHAT/1.0\n" +
+                "Cookie: SESSIONID=" + sessionId + "\n" +
+                "\n" +
+                "Hello world";
 
+        RequestService requestService = new RequestService();
+        ChatRequest chatRequest = requestService.deserializeRequestMessage(chatRequestString);
+        String actualSessionId = chatRequest.getCookie("SESSIONID");
+
+        Assert.assertEquals(sessionId, actualSessionId);
+
+    }
 }

@@ -32,7 +32,7 @@ public class CommandHandlerRegistrar {
     }
 
     private UserRepository getUserRepository() {
-        return UserRepositorySingleton.get();
+        return UserRepositorySingleton.getInstance().get();
     }
 
 

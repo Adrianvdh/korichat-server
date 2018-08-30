@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 
 public class ListUserCommand implements CommandHandler {
 
-    private final String command = "LISTUSER";
     private UserRepository userRepository;
 
     public ListUserCommand(UserRepository userRepository) {
@@ -22,7 +21,7 @@ public class ListUserCommand implements CommandHandler {
 
     @Override
     public boolean applicable(String action) {
-        return command.equals(action);
+        return "LIST_USER".equals(action);
     }
 
     @Override

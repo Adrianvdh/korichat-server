@@ -1,6 +1,7 @@
 package com.scholarcoder.chat.server.processor;
 
 import com.scholarcoder.chat.server.api.CommandHandler;
+import com.scholarcoder.chat.server.store.session.SessionStoreSingelton;
 import com.scholarcoder.chat.server.transport.ChatRequest;
 import com.scholarcoder.chat.server.transport.ChatResponse;
 import com.scholarcoder.chat.server.transport.RequestService;
@@ -16,12 +17,12 @@ public class MessageProcessor {
     }
 
     public String process(String message) {
-        RequestService requestService = new RequestService();
+        RequestService requestService = new RequestService(SessionStoreSingelton.get());
         ChatRequest chatRequest = requestService.deserializeRequestMessage(message);
 
         ChatResponse chatResponse = new ChatResponse();
         boolean foundApplicableHandler = false;
-        for (CommandHandler commandHandler : commandHandlers) {
+          for (CommandHandler commandHandler : commandHandlers) {
             if (commandHandler.applicable(chatRequest.getMethod())) {
                 commandHandler.doPerform(chatRequest, chatResponse);
                 foundApplicableHandler = true;

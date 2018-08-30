@@ -6,9 +6,7 @@ import com.scholarcoder.chat.server.store.session.SessionStore;
 import java.util.Arrays;
 import java.util.Map;
 
-import static com.scholarcoder.chat.server.transport.ServiceUtil.appendBody;
-import static com.scholarcoder.chat.server.transport.ServiceUtil.appendHeaders;
-import static com.scholarcoder.chat.server.transport.ServiceUtil.setHeadersAndBody;
+import static com.scholarcoder.chat.server.transport.ServiceUtil.*;
 
 public class RequestService {
 
@@ -59,13 +57,14 @@ public class RequestService {
     }
 
     private void injectSessionIfSessionHeaderExists(ChatRequest chatRequest, Map<String, String> requestHeaders) {
-        if (requestHeaders.containsKey("SESSIONID")) {
-            String sessionId = requestHeaders.get("SESSIONID");
+        String sessionId = chatRequest.getCookie("SESSIONID");
+        if (sessionId == null || sessionId.isEmpty()) {
+            return;
+        }
 
-            Session session = sessionStore.findBySessionId(sessionId);
-            if (session != null) {
-                chatRequest.setSession(session);
-            }
+        Session session = sessionStore.findBySessionId(sessionId);
+        if (session != null) {
+            chatRequest.setSession(session);
         }
     }
 
