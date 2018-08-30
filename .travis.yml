@@ -1,0 +1,12 @@
+sudo: false
+language: java
+cache:
+  directories:
+  - "$HOME/.cache"
+
+notifications:
+  email:
+    recipients:
+    - adrian@scholarcoder.com
+    on_success: change
+    on_failure: always
