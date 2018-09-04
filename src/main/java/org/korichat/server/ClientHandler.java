@@ -7,8 +7,8 @@ import java.net.Socket;
 
 public class ClientHandler {
     private Server server;
-
     private String sessionId;
+
     private Socket socket;
 
     private PrintWriter out;
