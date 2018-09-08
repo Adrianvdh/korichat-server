@@ -66,7 +66,7 @@ public class Server {
         logger.info("Handling new connection from address -> {}", clientAdress.getCanonicalHostName(), clientPort);
 
         Future clientHandle = connectionHandlerExecutorService.submit(() -> {
-            ClientHandler client = new ClientHandler(socket, generatedId(), this);
+            ClientHandler client = new ClientHandler(socket);
             client.handle();
         });
         clientHandlerConnections.add(clientHandle);
@@ -97,10 +97,6 @@ public class Server {
             }
         }
 
-    }
-
-    protected String generatedId() {
-        return UUID.randomUUID().toString();
     }
 
     public void stop() {

@@ -22,6 +22,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.korichat</groupId>
+            <artifactId>korichat-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.9.4</version>
@@ -66,9 +72,10 @@
 
         <!-- Testing dependencies -->
         <dependency>
-            <groupId>com.scholarcoder.chat</groupId>
-            <artifactId>chat-client</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <groupId>org.korichat</groupId>
+            <artifactId>korichat-client</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>test</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>

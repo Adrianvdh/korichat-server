@@ -1,0 +1,76 @@
+package org.korichat.server;
+
+import org.korichat.messaging.AckMessage;
+import org.korichat.messaging.Message;
+import org.korichat.messaging.protocol.FetchRequest;
+import org.korichat.messaging.protocol.FetchResponse;
+import org.korichat.messaging.protocol.Initialize;
+import org.korichat.messaging.protocol.Subscribe;
+import org.korichat.server.messagequeue.MessageQueue;
+
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.HashSet;
+import java.util.Set;
+
+public class AsyncClientHandlerStrategy implements HandlerStrategy<Message> {
+
+    private ObjectOutputStream out;
+    Set<String> subscribedTopics = new HashSet<>();
+    MessageQueue messageQueue = new MessageQueue();
+
+    public AsyncClientHandlerStrategy(ObjectOutputStream out) {
+        this.out = out;
+    }
+
+    @Override
+    public void handle(Message message) {
+        System.out.println("Server request " + message);
+
+        Class payloadType = message.getPayloadType();
+        try {
+            if (payloadType == Initialize.class) {
+                ack(message);
+            } else if (payloadType == Subscribe.class) {
+                Message<Subscribe> subscribeMessage = message;
+                String topic = subscribeMessage.getPayload().getTopic();
+
+                // validate the authorization of the topic to subscribe to
+
+                // add to the list of subscribed topic
+                subscribedTopics.add(topic);
+                System.out.println("Handling Ssubscribe message. msgId: " + message.getIdentifier());
+                Thread.sleep(1000);
+                ack(message);
+
+            } else if (payloadType == FetchRequest.class) {
+                Message<FetchRequest> fetchRequest = message;
+                String topic = fetchRequest.getPayload().getTopic();
+                Integer queuedMessagesOnTopic = messageQueue.countMessages(topic);
+
+                reply(new FetchResponse(topic, queuedMessagesOnTopic), topic);
+
+            } else {
+                String topic = message.getTopic();
+                messageQueue.createTopic(topic);
+
+                messageQueue.putMessage(topic, message);
+            }
+            // Reply with exception -> MessageException(No applicable message handler found!)
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void reply(Object payload, String topic) throws IOException {
+        out.writeObject(new Message(payload, topic));
+    }
+
+    private void ack(Message message) throws IOException {
+        out.writeObject(new Message<>(new AckMessage(message.getIdentifier()), message.getTopic()));
+    }
+}

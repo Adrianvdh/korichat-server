@@ -2,6 +2,7 @@ package org.korichat.server.messagequeue;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.korichat.messaging.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +20,7 @@ public class MessageQueueTest {
         MessageQueue messageQueue = new MessageQueue();
         messageQueue.createTopic("chat.api.user");
 
-        Message<String> message = new Message<>("message payload");
+        Message<String> message = new Message<>("message payload", null);
         message.addHeader("userId", UUID.randomUUID().toString());
 
         messageQueue.putMessage("chat.api.user", message);
@@ -41,7 +42,7 @@ public class MessageQueueTest {
             for (int i = 0; i < numbersInOrder.length; i++) {
                 int number = numbersInOrder[i];
 
-                Message<Integer> message = new Message<>(number);
+                Message<Integer> message = new Message<>(number, null);
                 messageQueue.putMessage("my.topic", message);
             }
         });
@@ -75,7 +76,7 @@ public class MessageQueueTest {
                     int number = numbersInOrder[i];
                     logger.info("{}: Publishing message {}", threadName, number);
 
-                    Message<Integer> message = new Message<>(number);
+                    Message<Integer> message = new Message<>(number, null);
                     messageQueue.putMessage(topic, message);
                 }
             });

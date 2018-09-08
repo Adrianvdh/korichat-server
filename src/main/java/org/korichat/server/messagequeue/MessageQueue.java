@@ -1,5 +1,6 @@
 package org.korichat.server.messagequeue;
 
+import org.korichat.messaging.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,5 +47,13 @@ public class MessageQueue {
             }
         }
         return null;
+    }
+
+    public Integer countMessages(String topicName) {
+        if(topicsQueue.containsKey(topicName)) {
+            BlockingQueue<Message> topicQueue = topicsQueue.get(topicName);
+            return topicQueue.size();
+        }
+        return 0;
     }
 }

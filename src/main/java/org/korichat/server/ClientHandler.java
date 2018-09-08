@@ -1,89 +1,60 @@
 package org.korichat.server;
 
-import org.korichat.server.processor.MessageProcessor;
+import org.korichat.messaging.Message;
 
-import java.io.*;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class ClientHandler {
-    private Server server;
-    private String sessionId;
-
     private Socket socket;
 
-    private PrintWriter out;
-    private BufferedReader in;
+    private ObjectOutputStream objectOutputStream = null;
+    private ObjectInputStream objectInputStream = null;
 
-    private MessageProcessor messageProcessor;
+    private HandlerStrategy handlerStrategy;
 
-    public ClientHandler(Socket clientSocket, String sessionId, Server server) {
-        this.server = server;
-        this.sessionId = sessionId;
-        this.messageProcessor = new MessageProcessor();
+    public ClientHandler(Socket clientSocket) {
         this.socket = clientSocket;
-
         trySetupInAndOutStreams(clientSocket);
     }
 
-
     private void trySetupInAndOutStreams(Socket clientSocket) {
-        try {
-            this.out = new PrintWriter(clientSocket.getOutputStream(), true);
-            this.in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
+        try {
+            objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+            objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void handle() {
-        while(!Thread.currentThread().isInterrupted()) {
-            StringBuilder requestBuilder = new StringBuilder();
+        while (!Thread.currentThread().isInterrupted()) {
             try {
-                String inputLine;
-                while ((inputLine = in.readLine()) != null) {
-                    requestBuilder.append(inputLine);
-                    if (!in.ready()) {
-                        break;
-                    }
-                    requestBuilder.append(System.lineSeparator());
-                }
-            } catch (IOException e) {
+                Message message = (Message) objectInputStream.readObject();
+
+                this.handlerStrategy = new AsyncClientHandlerStrategy(objectOutputStream);
+                this.handlerStrategy.handle(message);
+            } catch (EOFException e) {
+                // DataStream's detect end-of-life condition by throwing EOFException
+                break;
+            } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
-
-            String response;
-            try {
-                response = messageProcessor.process(requestBuilder.toString());
-            } catch (Throwable t) {
-                StringBuilder exceptionStringBuilder = new StringBuilder();
-                exceptionStringBuilder.append("500 Internal Server Error!").append(System.lineSeparator());
-
-                String stackTrace = convertStackTraceToString(t);
-                exceptionStringBuilder.append(stackTrace);
-
-                response = exceptionStringBuilder.toString();
-            }
-            out.println(response);
         }
+        tryClose();
+    }
+
+    private void tryClose() {
         try {
-            this.out.close();
-            this.in.close();
+            this.objectOutputStream.close();
+            this.objectInputStream.close();
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private String convertStackTraceToString(Throwable t) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        t.printStackTrace(pw);
-
-        return sw.toString();
-    }
-
-    public void sendMessage(String message) {
-        out.println(message);
     }
 }
