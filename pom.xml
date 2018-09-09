@@ -69,7 +69,6 @@
             <version>2.6</version>
         </dependency>
 
-
         <!-- Testing dependencies -->
         <dependency>
             <groupId>org.korichat</groupId>

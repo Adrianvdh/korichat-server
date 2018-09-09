@@ -10,9 +10,7 @@ import org.korichat.messaging.Callback;
 import org.korichat.messaging.Message;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -107,7 +105,38 @@ public class AsyncClientTest {
     }
 
     @Test
-    public void testReceiveMultipleMessage() throws ExecutionException, InterruptedException {
+    public void testPollNonsubscribedTopic() throws ExecutionException, InterruptedException {
+        AsyncClient client = new AsyncClient(HOST, PORT);
+        client.connect();
+
+        Message<String> message = new Message<>("Hello", "message.user.adrian");
+        client.send(message).get();
+
+        // hasn't subscribed to anything
+        List<Message> messages = client.poll(1000);
+
+        Assert.assertEquals(0, messages.size());
+
+        client.disconnect();
+    }
+
+
+    @Test
+    public void testPollTopicThatDoesNotExist() {
+        AsyncClient client = new AsyncClient(HOST, PORT);
+        client.connect();
+
+        client.subscribe("none.existent.topic");
+        // hasn't subscribed to anything
+        List<Message> messages = client.poll(1000);
+
+        Assert.assertEquals(0, messages.size());
+
+        client.disconnect();
+    }
+
+    @Test
+    public void testReceiveMultipleMessage_FromSameTopic() throws ExecutionException, InterruptedException {
         AsyncClient client = new AsyncClient(HOST, PORT);
         client.connect();
 
@@ -122,6 +151,65 @@ public class AsyncClientTest {
         }
 
         client.subscribe("message.user.adrian");
+        List<Message> polledMessages = client.poll(1000);
+
+        Assert.assertEquals(sendMessages, polledMessages);
+
+        client.disconnect();
+    }
+
+    @Test
+    public void testReceiveMultipleMessage_FromMultipleTopics() throws ExecutionException, InterruptedException {
+        AsyncClient client = new AsyncClient(HOST, PORT);
+        client.connect();
+
+        List<Message<String>> sendMessages = new ArrayList<>();
+        sendMessages.add(new Message<>("A", "message.user.topic1"));
+        sendMessages.add(new Message<>("B", "message.user.topic2"));
+        sendMessages.add(new Message<>("C", "message.user.topic3"));
+        sendMessages.add(new Message<>("D", "message.user.topic4"));
+
+        for (Message<String> message : sendMessages) {
+            client.send(message).get();
+        }
+
+        client.subscribe("message.user.topic1");
+        client.subscribe("message.user.topic2");
+        client.subscribe("message.user.topic3");
+        client.subscribe("message.user.topic4");
+        List<Message> polledMessages = client.poll(1000);
+
+        for (Message polledMessage : polledMessages) {
+            System.out.println(polledMessage);
+        }
+
+
+        Assert.assertEquals(sendMessages, polledMessages);
+
+        client.disconnect();
+    }
+
+    @Test
+    public void testReceiveMultipleMessage_FromMultipleTopics_excludeSubscribingToOne_shouldNotReceive() throws ExecutionException, InterruptedException {
+        AsyncClient client = new AsyncClient(HOST, PORT);
+        client.connect();
+
+        List<Message<String>> sendMessages = new ArrayList<>();
+        sendMessages.add(new Message<>("A", "message.user.topic1"));
+        sendMessages.add(new Message<>("B", "message.user.topic2"));
+        sendMessages.add(new Message<>("C", "message.user.topic3"));
+        sendMessages.add(new Message<>("D", "message.user.topic4"));
+        for (Message<String> message : sendMessages) {
+            client.send(message).get();
+        }
+
+        // not subscribed to this topic -- should not receive this message
+        client.send(new Message<>("E", "message.user.topic5")).get();
+
+        client.subscribe("message.user.topic1");
+        client.subscribe("message.user.topic2");
+        client.subscribe("message.user.topic3");
+        client.subscribe("message.user.topic4");
         List<Message> polledMessages = client.poll(1000);
 
         Assert.assertEquals(sendMessages, polledMessages);
