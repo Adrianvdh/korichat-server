@@ -16,17 +16,16 @@ import java.util.Set;
 public class AsyncClientHandlerStrategy implements HandlerStrategy<Message> {
 
     private ObjectOutputStream out;
-    Set<String> subscribedTopics = new HashSet<>();
-    MessageQueue messageQueue = new MessageQueue();
+    private MessageQueue messageQueue;
+    private Set<String> subscribedTopics = new HashSet<>();
 
-    public AsyncClientHandlerStrategy(ObjectOutputStream out) {
+    public AsyncClientHandlerStrategy(ObjectOutputStream out, MessageQueue messageQueue) {
         this.out = out;
+        this.messageQueue = messageQueue;
     }
 
     @Override
     public void handle(Message message) {
-        System.out.println("Server request " + message);
-
         Class payloadType = message.getPayloadType();
         try {
             if (payloadType == Initialize.class) {
@@ -39,7 +38,6 @@ public class AsyncClientHandlerStrategy implements HandlerStrategy<Message> {
 
                 // add to the list of subscribed topic
                 subscribedTopics.add(topic);
-                System.out.println("Handling Ssubscribe message. msgId: " + message.getIdentifier());
                 Thread.sleep(1000);
                 ack(message);
 
@@ -50,11 +48,17 @@ public class AsyncClientHandlerStrategy implements HandlerStrategy<Message> {
 
                 reply(new FetchResponse(topic, queuedMessagesOnTopic), topic);
 
+                for (int i = 0; i < queuedMessagesOnTopic; i++) {
+                    Message oneMessage = messageQueue.take(topic);
+                    reply(oneMessage);
+                }
             } else {
                 String topic = message.getTopic();
                 messageQueue.createTopic(topic);
 
                 messageQueue.putMessage(topic, message);
+
+                ack(message);
             }
             // Reply with exception -> MessageException(No applicable message handler found!)
 
@@ -66,11 +70,17 @@ public class AsyncClientHandlerStrategy implements HandlerStrategy<Message> {
 
     }
 
-    private void reply(Object payload, String topic) throws IOException {
+
+    private void reply(Message message) throws IOException {
+        out.writeObject(message);
+    }
+
+    private <T> void reply(T payload, String topic) throws IOException {
         out.writeObject(new Message(payload, topic));
     }
 
     private void ack(Message message) throws IOException {
-        out.writeObject(new Message<>(new AckMessage(message.getIdentifier()), message.getTopic()));
+        AckMessage ackMessage = new AckMessage(message.getIdentifier());
+        reply(ackMessage, message.getTopic());
     }
 }

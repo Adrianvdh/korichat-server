@@ -1,12 +1,14 @@
 package org.korichat.server;
 
 import com.scholarcoder.chat.client.AsyncClient;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.korichat.messaging.AckMessage;
 import org.korichat.messaging.Callback;
 import org.korichat.messaging.Message;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -86,21 +88,43 @@ public class AsyncClientTest {
     }
 
     @Test
-    public void testReceiveOneMessage() {
+    public void testReceiveOneMessage() throws ExecutionException, InterruptedException {
         AsyncClient client = new AsyncClient(HOST, PORT);
         client.connect();
 
         Message<String> message = new Message<>("Hello", "message.user.adrian");
-        client.send(message);
+        client.send(message).get();
 
         client.subscribe("message.user.adrian");
-        System.out.println("Subscribed");
         List<Message> messages = client.poll(1000);
 
         Assert.assertEquals(messages.get(0), message);
 
         client.disconnect();
+    }
 
+    @Test
+    public void testReceiveMultipleMessage() throws ExecutionException, InterruptedException {
+        AsyncClient client = new AsyncClient(HOST, PORT);
+        client.connect();
 
+        Message<String> message = new Message<>("A", "message.user.adrian");
+        Message<String> message2 = new Message<>("B", "message.user.adrian");
+        Message<String> message3 = new Message<>("C", "message.user.adrian");
+        Message<String> message4 = new Message<>("D", "message.user.adrian");
+        client.send(message).get();
+        client.send(message2).get();
+        client.send(message3).get();
+        client.send(message4).get();
+
+        client.subscribe("message.user.adrian");
+        List<Message> messages = client.poll(1000);
+
+        Assert.assertEquals(messages.get(0), message);
+        Assert.assertEquals(messages.get(1), message2);
+        Assert.assertEquals(messages.get(2), message3);
+        Assert.assertEquals(messages.get(3), message4);
+
+        client.disconnect();
     }
 }

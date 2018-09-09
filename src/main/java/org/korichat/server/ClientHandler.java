@@ -1,6 +1,8 @@
 package org.korichat.server;
 
 import org.korichat.messaging.Message;
+import org.korichat.server.messagequeue.MessageQueue;
+import org.korichat.server.messagequeue.MessageQueueSingleton;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -36,7 +38,8 @@ public class ClientHandler {
             try {
                 Message message = (Message) objectInputStream.readObject();
 
-                this.handlerStrategy = new AsyncClientHandlerStrategy(objectOutputStream);
+                MessageQueue messageQueue = MessageQueueSingleton.getInstance().getMessageQueue();
+                this.handlerStrategy = new AsyncClientHandlerStrategy(objectOutputStream, messageQueue);
                 this.handlerStrategy.handle(message);
             } catch (EOFException e) {
                 // DataStream's detect end-of-life condition by throwing EOFException
