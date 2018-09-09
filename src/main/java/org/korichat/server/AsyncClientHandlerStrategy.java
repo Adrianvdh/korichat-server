@@ -38,7 +38,6 @@ public class AsyncClientHandlerStrategy implements HandlerStrategy<Message> {
 
                 // add to the list of subscribed topic
                 subscribedTopics.add(topic);
-                Thread.sleep(1000);
                 ack(message);
 
             } else if (payloadType == FetchRequest.class) {
@@ -64,10 +63,7 @@ public class AsyncClientHandlerStrategy implements HandlerStrategy<Message> {
 
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
-
     }
 
 
