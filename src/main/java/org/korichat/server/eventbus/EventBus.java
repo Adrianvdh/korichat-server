@@ -2,6 +2,8 @@ package org.korichat.server.eventbus;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class EventBus {
@@ -20,23 +22,54 @@ public class EventBus {
 
             for (Method method : listenerClass.getMethods()) {
                 if (method.isAnnotationPresent(EventHandler.class)) {
-
-                    Class<?>[] parameterTypes = method.getParameterTypes();
-                    for (Class<?> parameterType : parameterTypes) {
-                        if(parameterType == event.getClass()) {
-                            try {
-                                method.invoke(listenerInstance, event);
-                            } catch (IllegalAccessException e) {
-                                e.printStackTrace();
-                            } catch (InvocationTargetException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-
+                    tryInvokeEventHandlerMethod(method, listenerInstance, event);
                 }
             }
         }
 
+    }
+
+    private void tryInvokeEventHandlerMethod(Method method, Object listenerInstance, Object event) {
+        // first parameter type has to be event
+        // try inject other arguments
+
+        Class[] parameterTypes = method.getParameterTypes();
+
+
+        List<Object> argumentsToInvokeMethodWith = new LinkedList<>();
+
+        // collect parameter
+        for (int i = 0; i < parameterTypes.length; i++) {
+            Class parameterType = method.getParameterTypes()[i];
+
+            // validate first parameter list
+            if (i == 0 && parameterType != event.getClass()) {
+                throw new RuntimeException("The first parameter has to be the an event");
+            }
+
+            if(i == 0) {
+                // handle event
+                argumentsToInvokeMethodWith.add(event);
+                continue;
+            }
+            // add method argument type instance object
+            if (listenerContext.getBeanObjects().containsKey(parameterType)) {
+                argumentsToInvokeMethodWith.add(listenerContext.getBeanObjects().get(parameterType));
+            }
+            else {
+                argumentsToInvokeMethodWith.add(null);
+            }
+        }
+
+        Object[] argumentInstanceObjects = argumentsToInvokeMethodWith.toArray();
+
+        // try invoke
+        try {
+            method.invoke(listenerInstance, argumentInstanceObjects);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
     }
 }

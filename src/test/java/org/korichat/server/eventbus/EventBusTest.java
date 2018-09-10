@@ -1,12 +1,15 @@
 package org.korichat.server.eventbus;
 
 import org.junit.Test;
+import org.korichat.messaging.Message;
+import org.korichat.server.MessagePublisher;
 import org.korichat.server.eventbus.stubs.ComponentScanner;
 import org.korichat.server.eventbus.stubs.MyEvent;
 import org.korichat.server.eventbus.stubs.TestMessageListener;
 import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.URISyntaxException;
 import java.util.List;
 
@@ -14,27 +17,38 @@ public class EventBusTest {
 
     @Test
     public void invokeMethod() {
-        TestMessageListener spy = Mockito.spy(new TestMessageListener());
+        ObjectOutputStream mockObjectOutputStream = Mockito.mock(ObjectOutputStream.class);
+        MessagePublisher publisher = new MessagePublisher(mockObjectOutputStream);
+
+        TestMessageListener listener = new TestMessageListener();
+        ListenerContext context = new ListenerContext();
+        context.registerBean(publisher);
+        context.registerListener(listener);
+
 
         MyEvent myEvent = new MyEvent("Hello");
-        spy.handleMyEvent(myEvent);
+        EventBus eventBus = new EventBus(context);
 
-        Mockito.verify(spy, Mockito.times(1)).handleMyEvent(myEvent);
+
+        eventBus.publish(myEvent);
+
+//        Mockito.verify(publisher).publish(new Message("Response", "example.topic"));
     }
 
     @Test
-    public void testPublishMessage_usingInstanceContext() {
-        TestMessageListener spy = Mockito.spy(new TestMessageListener());
+    public void testThreadLocal() {
+        ThreadLocal<String> threadLocal = new ThreadLocal<String>() {
+            @Override
+            protected String initialValue() {
+                return super.initialValue();
+            }
+        };
 
-        ListenerContext listenerContext = new ListenerContext();
-        listenerContext.storeInstance(spy);
+        new Thread(() -> {
+            threadLocal.set("Thread1");
 
-        EventBus eventBus = new EventBus(listenerContext);
+        }).start();
 
-        MyEvent myEvent = new MyEvent("Hello");
-        eventBus.publish(myEvent);
-
-        Mockito.verify(spy, Mockito.times(1)).handleMyEvent(myEvent);
     }
 
     @Test
