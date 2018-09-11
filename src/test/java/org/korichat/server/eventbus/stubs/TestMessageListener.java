@@ -6,17 +6,14 @@ import org.korichat.server.eventbus.EventHandler;
 
 public class TestMessageListener {
 
-    @EventHandler
-    public void handleMyEvent(MyEvent myEvent, MessagePublisher messagePublisher) {
-        System.out.println("handleMyEvent :: invoked!");
-//        messagePublisher.publish(new Message("Response", "example.topic"));
+    public void handleMessage() {
 
     }
 
-//    @EventHandler
-//    public void handleMyEvent(MyEvent myEvent, MessagePublisher messagePublisher, SessionContext sessionContext) {
-//        System.out.println("TestMessageListener :: handleMyEvent");
-//    }
+    @EventHandler
+    public void handleMessage(Message message, MessagePublisher messagePublisher) {
+        messagePublisher.ack(message);
 
-
+        System.out.println("Invoked here");
+    }
 }

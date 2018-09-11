@@ -1,7 +1,5 @@
 package org.korichat.server.eventbus;
 
-import org.korichat.server.MessagePublisher;
-
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,11 +24,26 @@ public class ListenerContext {
             return;
         }
 
-        this.instanceObjects.put(object.getClass(), object);
+        Class sanitizedClass = sanitizeClassName(object.getClass());
+
+        this.instanceObjects.put(sanitizedClass, object);
+    }
+
+    private Class sanitizeClassName(Class classToSanitize) {
+        String sanitizedClassName = classToSanitize.getCanonicalName().split("\\$")[0];
+        Class sanitizedClass = null;
+        try {
+            sanitizedClass = Class.forName(sanitizedClassName);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return sanitizedClass;
     }
 
     public void registerBean(Object bean) {
-        this.beanObjects.put(bean.getClass(), bean);
+        Class sanitizedClass = sanitizeClassName(bean.getClass());
+
+        this.beanObjects.put(sanitizedClass, bean);
     }
 
     public Map<Class, Object> getInstanceObjects() {

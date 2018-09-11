@@ -30,11 +30,7 @@ public class EventBus {
     }
 
     private void tryInvokeEventHandlerMethod(Method method, Object listenerInstance, Object event) {
-        // first parameter type has to be event
-        // try inject other arguments
-
         Class[] parameterTypes = method.getParameterTypes();
-
 
         List<Object> argumentsToInvokeMethodWith = new LinkedList<>();
 
@@ -47,17 +43,14 @@ public class EventBus {
                 throw new RuntimeException("The first parameter has to be the an event");
             }
 
+            // handle event argument
             if(i == 0) {
-                // handle event
                 argumentsToInvokeMethodWith.add(event);
                 continue;
             }
             // add method argument type instance object
             if (listenerContext.getBeanObjects().containsKey(parameterType)) {
                 argumentsToInvokeMethodWith.add(listenerContext.getBeanObjects().get(parameterType));
-            }
-            else {
-                argumentsToInvokeMethodWith.add(null);
             }
         }
 
