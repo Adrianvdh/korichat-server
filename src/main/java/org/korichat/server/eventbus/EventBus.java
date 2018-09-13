@@ -1,5 +1,7 @@
 package org.korichat.server.eventbus;
 
+import org.korichat.messaging.Message;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
@@ -38,9 +40,9 @@ public class EventBus {
         for (int i = 0; i < parameterTypes.length; i++) {
             Class parameterType = method.getParameterTypes()[i];
 
-            // validate first parameter list
-            if (i == 0 && parameterType != event.getClass()) {
-                throw new RuntimeException("The first parameter has to be the an event");
+            // validate first parameter is of type Message
+            if (i == 0 && parameterType != Message.class) {
+                throw new EventHandlerException("The first parameter has to be of type: Message");
             }
 
             // handle event argument

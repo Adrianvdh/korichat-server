@@ -10,7 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class ClientHandler {
+public class ConnectionHandler {
     private Socket socket;
 
     private ObjectOutputStream objectOutputStream = null;
@@ -18,7 +18,7 @@ public class ClientHandler {
 
     private HandlerStrategy handlerStrategy;
 
-    public ClientHandler(Socket clientSocket) {
+    public ConnectionHandler(Socket clientSocket) {
         this.socket = clientSocket;
         trySetupInAndOutStreams(clientSocket);
     }
@@ -39,7 +39,7 @@ public class ClientHandler {
                 Message message = (Message) objectInputStream.readObject();
 
                 MessageQueue messageQueue = MessageQueueSingleton.getInstance().getMessageQueue();
-                this.handlerStrategy = new AsyncClientHandlerStrategy(objectOutputStream, messageQueue);
+                this.handlerStrategy = new MessagingHandlerStrategy(objectOutputStream, messageQueue);
                 this.handlerStrategy.handle(message);
             } catch (EOFException e) {
                 // DataStream's detect end-of-life condition by throwing EOFException

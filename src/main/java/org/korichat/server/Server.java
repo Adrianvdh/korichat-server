@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -66,7 +65,7 @@ public class Server {
         logger.info("Handling new connection from address -> {}", clientAdress.getCanonicalHostName(), clientPort);
 
         Future clientHandle = connectionHandlerExecutorService.submit(() -> {
-            ClientHandler client = new ClientHandler(socket);
+            ConnectionHandler client = new ConnectionHandler(socket);
             client.handle();
         });
         clientHandlerConnections.add(clientHandle);
