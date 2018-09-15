@@ -6,14 +6,26 @@ import org.korichat.server.eventbus.EventHandler;
 
 public class TestMessageListener {
 
-    public void handleMessage() {
+    @EventHandler
+    public void handleMyEvent(MyEvent myEvent, MessagePublisher messagePublisher) {
+        System.out.println("Invoked handleMyEvent(myEvent, publisher)");
 
+        messagePublisher.publish(new Message<>("someId", "Reply", null, null));
     }
 
-    @EventHandler
-    public void handleMessage(Message message, MessagePublisher messagePublisher) {
-        messagePublisher.ack(message);
 
-        System.out.println("Invoked here");
+    @EventHandler
+    public void handleMessageWithOtherDependencies(OtherEvent otherEvent, MessagePublisher messagePublisher, SomeService service) {
+        System.out.println("Invoked handleMessageWithDependency(message, publisher, service)");
+
+        messagePublisher.publish(new Message<>("someId", "Reply", null, null));
+    }
+
+
+    @EventHandler
+    public void handleMessageString(String string, MessagePublisher messagePublisher) {
+        System.out.println("Invoked handleMessageString");
+
+        messagePublisher.publish(new Message<>("someId", "Reply", null, null));
     }
 }

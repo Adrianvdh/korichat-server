@@ -2,6 +2,7 @@ package org.korichat.server.api.user;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 import org.korichat.client.MessagingClient;
 import org.korichat.server.Server;
 import org.korichat.server.api.user.repository.UserRepository;
@@ -38,5 +39,9 @@ public class ServerUserManagementTest {
 
         UserRepository userRepository = UserRepositorySingleton.getInstance().get();
         userRepository.deleteAll();
+    }
+
+    @Test
+    public void testSendRegisterUser() {
     }
 }

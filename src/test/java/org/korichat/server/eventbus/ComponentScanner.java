@@ -1,15 +1,48 @@
-package org.korichat.server.eventbus.stubs;
+package org.korichat.server.eventbus;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 
+/**
+ * Extracted from StackOverflow
+ */
 public class ComponentScanner {
+
+    public Map<Class, List<Method>> findEventHandlerClasses(String packageName) {
+        List<Class> classes = null;
+        try {
+            classes = getClasses(packageName);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        Map<Class, List<Method>> annotatedMethods = new HashMap<>();
+
+        for (Class klass : classes) {
+            List<Method> eventHandlerMethods = new ArrayList<>();
+
+            for (Method method : klass.getMethods()) {
+                if (method.isAnnotationPresent(EventHandler.class)) {
+                    eventHandlerMethods.add(method);
+                }
+            }
+
+            if(!eventHandlerMethods.isEmpty()) {
+                annotatedMethods.put(klass, eventHandlerMethods);
+            }
+        }
+
+        return annotatedMethods;
+    }
 
     /**
      * Scans all classes accessible from the context class loader which belong
